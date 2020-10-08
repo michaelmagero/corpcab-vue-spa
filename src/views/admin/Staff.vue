@@ -36,7 +36,7 @@
                             </b-row>
 
                             <!-- Main table element -->
-                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="items" :fields="fields" :current-page="currentPage"
+                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="users" :fields="fields" :current-page="currentPage"
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
@@ -89,70 +89,50 @@
 </template>
 
 <script>
+	import axios from "axios";
+
 	import Navbar from "@/components/Navbar";
+
 	export default {
 		data() {
 			return {
-				items: [
-					{
-						isActive: true,
-						age: 40,
-						name: { first: "Dickerson", last: "Macdonald" },
-					},
-					{ isActive: false, age: 21, name: { first: "Larsen", last: "Shaw" } },
-					{
-						isActive: false,
-						age: 9,
-						name: { first: "Mini", last: "Navarro" },
-						_rowVariant: "success",
-					},
-					{ isActive: false, age: 89, name: { first: "Geneva", last: "Wilson" } },
-					{ isActive: true, age: 38, name: { first: "Jami", last: "Carney" } },
-					{ isActive: false, age: 27, name: { first: "Essie", last: "Dunlap" } },
-					{ isActive: true, age: 40, name: { first: "Thor", last: "Macdonald" } },
-					{
-						isActive: true,
-						age: 87,
-						name: { first: "Larsen", last: "Shaw" },
-						_cellVariants: { age: "danger", isActive: "warning" },
-					},
-					{ isActive: false, age: 26, name: { first: "Mitzi", last: "Navarro" } },
-					{
-						isActive: false,
-						age: 22,
-						name: { first: "Genevieve", last: "Wilson" },
-					},
-					{ isActive: true, age: 38, name: { first: "John", last: "Carney" } },
-					{ isActive: false, age: 29, name: { first: "Dick", last: "Dunlap" } },
-				],
+				users: [],
 				fields: [
 					{
+						key: "id",
+						label: "ID",
+						sortable: true,
+					},
+					{
 						key: "name",
-						label: "Person Full name",
+						label: "Firstname",
 						sortable: true,
-						sortDirection: "desc",
 					},
 					{
-						key: "age",
-						label: "Person age",
+						key: "lastname",
+						label: "Lastname",
 						sortable: true,
-						class: "text-center",
 					},
 					{
-						key: "isActive",
-						label: "is Active",
-						formatter: (value, key, item) => {
-							return value ? "Yes" : "No";
-						},
+						key: "role",
+						label: "Role",
 						sortable: true,
-						sortByFormatted: true,
-						filterByFormatted: true,
+					},
+					{
+						key: "status",
+						label: "Status",
+						sortable: true,
+					},
+					{
+						key: "created_at",
+						label: "Created At",
+						sortable: true,
 					},
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
 				currentPage: 1,
-				perPage: 5,
+				perPage: 10,
 				pageOptions: [5, 10, 15],
 				sortBy: "",
 				sortDesc: false,
@@ -183,7 +163,16 @@
 		},
 		mounted() {
 			// Set the initial number of items
-			this.totalRows = this.items.length;
+			//this.totalRows = this.items.length;
+			axios
+				.get("/v1/users")
+				.then((res) => {
+					this.users = res.data.data;
+					console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		},
 		methods: {
 			info(item, index, button) {

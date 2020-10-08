@@ -7,6 +7,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import axios from 'axios'
 
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -21,6 +22,11 @@ library.add( faUserAstronaut);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false
+
+
+//axios base url definition
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
+
 
 new Vue({
   router,
