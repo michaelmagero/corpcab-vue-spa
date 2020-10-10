@@ -5,7 +5,7 @@
         <div class="container">
             <div class="row mt-5">
                 <div class="col-md-4">
-                    <h1>Staff</h1>
+                    <h1>Driver Payments</h1>
                 </div>
                 <div class="col-md-6"></div>
                 <div class="col-md-2 mt-3">
@@ -39,7 +39,8 @@
                             <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="users" :fields="fields" :current-page="currentPage"
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
-                                <template v-slot:cell(name)="row">
+                            
+                                <template v-slot:cell(name)="row" >
                                     {{ row.value }}
                                 </template>
 
@@ -104,23 +105,13 @@
 						sortable: true,
 					},
 					{
-						key: "name",
-						label: "Firstname",
+						key: ["name", "lastname"],
+						label: "Firstname" + "Lastname",
 						sortable: true,
 					},
 					{
 						key: "lastname",
 						label: "Lastname",
-						sortable: true,
-					},
-					{
-						key: "role",
-						label: "Role",
-						sortable: true,
-					},
-					{
-						key: "status",
-						label: "Status",
 						sortable: true,
 					},
 					{
@@ -165,7 +156,7 @@
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
 			axios
-				.get("/v1/users")
+				.get("/v1/drivers")
 				.then((res) => {
 					this.users = res.data.data;
 					console.log(res);

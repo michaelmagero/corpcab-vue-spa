@@ -12,7 +12,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/Home.vue')
+      return import(/* webpackChunkName: "about" */ '../views/Home')
     }
   },
   {
@@ -22,7 +22,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/About.vue')
+      return import(/* webpackChunkName: "about" */ '../views/About')
     }
   },
   {
@@ -32,7 +32,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/auth/Login.vue')
+      return import(/* webpackChunkName: "about" */ '../views/auth/Login')
     }
   },
   {
@@ -42,7 +42,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/auth/DriverRegistration.vue')
+      return import(/* webpackChunkName: "about" */ '../views/auth/DriverRegistration')
     }
   },
   {
@@ -52,7 +52,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/auth/OwnerRegistration.vue')
+      return import(/* webpackChunkName: "about" */ '../views/auth/OwnerRegistration')
     }
   },
   
@@ -65,7 +65,7 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/admin/Dashboard.vue')
+      return import(/* webpackChunkName: "about" */ '../views/admin/Dashboard')
     }
   },
   {
@@ -75,7 +75,17 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/admin/Staff.vue')
+      return import(/* webpackChunkName: "about" */ '../views/admin/Staff')
+    }
+  },
+  {
+    path: '/admin/payment',
+    name: 'Payment',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Payment')
     }
   }
   
