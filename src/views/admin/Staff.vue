@@ -6,15 +6,18 @@
             <div class="row mt-5">
                 <div class="col-md-4">
                     <h1>Staff</h1>
+					<b-button size="sm" @click="info($event.target)">
+						<b-icon icon="people-fill"></b-icon>  Create Staff
+					</b-button>
                 </div>
-                <div class="col-md-6"></div>
-                <div class="col-md-2 mt-3">
+                <div class="col-md-4"></div>
+                <div class="col-md-3 mt-4 ml-5">
                     <p class="text-secondary">{{ new Date().toLocaleString() }}</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <b-card class="mt-5">
+                    <b-card class="mt-5 mb-5">
                         <b-container fluid>
                             <!-- User Interface controls -->
                             <b-row class="mt-5">
@@ -40,31 +43,41 @@
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
-                                    {{ row.value }}
+									<b-img class="avatar" src="https://placeholder.it/150x150"></b-img>
+                                    {{ row.item.name + " " + row.item.lastname }}
+                                </template>
+
+                                <template v-slot:cell(status)="row">
+                                    <b-badge> 
+										{{ row.item.status ? 'Active' : 'In-active' }}
+									</b-badge>
                                 </template>
 
                                 <template v-slot:cell(actions)="row">
-                                    <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-                                        Edit Details
+                                    <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
+                                        <b-icon icon="pencil-fill"></b-icon>  Edit Details
                                     </b-button>
                                     <b-button size="sm" @click="row.toggleDetails">
-                                        {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+                                        <b-icon icon="eye-fill"></b-icon>  {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+                                    </b-button>
+									<b-button size="sm" class="ml-2">
+                                        <b-icon icon="trash-fill"></b-icon>  Delete
                                     </b-button>
                                 </template>
 
                                 <template v-slot:row-details="row">
                                     <b-card>
-                                        <ul>
-                                            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                                        <ul id="show-list">
+                                            <li v-for="(value, key) in row.item" :key="key"><strong> {{ key }} : </strong> {{ value }}</li>
                                         </ul>
                                     </b-card>
                                 </template>
+
                             </b-table>
 
                             <b-row class="mt-5">
                                 <b-col sm="5" md="3" class="my-1">
-                                    <b-form-group label="Show" label-cols-sm="6" label-cols-md="4" label-cols-lg="3"
-                                    label-size="sm" label-for="perPageSelect" class="mb-2">
+                                    <b-form-group label="Show" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-size="sm" label-for="perPageSelect" class="mb-2">
                                         <b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
                                     </b-form-group>
                                 </b-col>
@@ -75,9 +88,41 @@
                                 </b-col>
                             </b-row>
 
-                            <!-- Info modal -->
+
+
+                            <!-- Edit modal -->
                             <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
                                 <pre>{{ infoModal.content }}</pre>
+								<b-form @submit="onSubmit" @reset="onReset" v-if="show">
+									<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
+										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" type="text" required></b-form-input>
+									</b-form-group>
+
+									<b-form-group id="input-group-1" label="Lastname:" label-for="input-1">
+										<b-form-input id="input-1" v-model="form.lastname" value="mike" type="text" required></b-form-input>
+									</b-form-group>
+
+									<b-form-group id="input-group-1" label="Email:" label-for="input-1">
+										<b-form-input id="input-1" v-model="form.email" value="mike" type="email" required></b-form-input>
+									</b-form-group>
+
+									<b-form-group id="input-group-1" label="Password:" label-for="input-1">
+										<b-form-input id="input-1" v-model="form.password" value="mike" type="password" required></b-form-input>
+									</b-form-group>
+
+									<b-form-group id="input-group-2" label="Role:" label-for="input-2">
+										<b-form-select>
+											<b-form-option value="admin"> Admin</b-form-option>
+											<b-form-option value="administrator"> Administrator</b-form-option>
+											<b-form-option value="accountant"> Accountant</b-form-option>
+										</b-form-select>
+									</b-form-group>
+
+									<b-form-group>
+										<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+										<b-button type="reset" variant="danger">Reset</b-button>
+									</b-form-group>
+								</b-form>
                             </b-modal>
                         </b-container>
                     </b-card>
@@ -88,6 +133,22 @@
     </div>
 </template>
 
+<style scoped>
+	.avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+	}
+
+	#show-list {
+		list-style: none;
+	}
+
+	#show-list li {
+		padding: 5px 0 5px 0;
+	}
+</style>
+
 <script>
 	import axios from "axios";
 
@@ -96,38 +157,14 @@
 	export default {
 		data() {
 			return {
+				//tables data
 				users: [],
 				fields: [
-					{
-						key: "id",
-						label: "ID",
-						sortable: true,
-					},
-					{
-						key: "name",
-						label: "Firstname",
-						sortable: true,
-					},
-					{
-						key: "lastname",
-						label: "Lastname",
-						sortable: true,
-					},
-					{
-						key: "role",
-						label: "Role",
-						sortable: true,
-					},
-					{
-						key: "status",
-						label: "Status",
-						sortable: true,
-					},
-					{
-						key: "created_at",
-						label: "Created At",
-						sortable: true,
-					},
+					{ key: "id", label: "ID", sortable: true },
+					{ key: "name", label: "Names", sortable: true },
+					{ key: "role", label: "Role", sortable: true },
+					{ key: "status", label: "Status", sortable: true },
+					{ key: "created_at", label: "Created At", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -143,6 +180,16 @@
 					id: "info-modal",
 					title: "",
 					content: "",
+				},
+
+				//edit form data
+				show: true,
+				form: {
+					firstname: "",
+					lastname: "",
+					email: "",
+					password: "",
+					role: "",
 				},
 			};
 		},
@@ -168,15 +215,30 @@
 				.get("/v1/users")
 				.then((res) => {
 					this.users = res.data.data;
-					console.log(res);
+					//console.log(res);
 				})
 				.catch((err) => {
 					console.error(err);
 				});
 		},
 		methods: {
+			onSubmit(evt) {
+				evt.preventDefault();
+				alert(JSON.stringify(this.form));
+			},
+			onReset(evt) {
+				evt.preventDefault();
+				// Reset our form values
+				this.form.email = "";
+				this.form.password = "";
+				// Trick to reset/clear native browser form validation state
+				this.show = false;
+				this.$nextTick(() => {
+					this.show = true;
+				});
+			},
 			info(item, index, button) {
-				this.infoModal.title = `Row index: ${index}`;
+				this.infoModal.title = "Edit";
 				this.infoModal.content = JSON.stringify(item, null, 2);
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
