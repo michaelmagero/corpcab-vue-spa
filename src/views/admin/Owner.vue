@@ -5,7 +5,10 @@
         <div class="container">
             <div class="row mt-5">
                 <div class="col-md-4">
-                    <h1>Payments</h1>
+                    <h1>Owner</h1>
+					<b-button size="sm" @click="info($event.target)">
+						<b-icon icon="people-fill"></b-icon>  Create Owner
+					</b-button>
                 </div>
                 <div class="col-md-4"></div>
                 <div class="col-md-3 mt-4 ml-5">
@@ -40,48 +43,27 @@
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
-									<b-img class="avatar" src="https://placeholder.it/150x150"></b-img>
                                     {{ row.item.name + " " + row.item.lastname }}
-									<div class="row ml-5">
-										<div class="col-md-6">
-											<span>Total</span>
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											Today
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											This Week
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											This Month
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
                                 </template>
 
                                 <template v-slot:cell(status)="row">
-                                    <b-badge variant="danger" :show="row.item.status ? '1' : '0' "> 
-										<strong>In Active</strong>
-									</b-badge>
+                                    <div v-if="row.item.status == 1">
+										<b-badge variant="success">Active</b-badge>
+									</div>
+
+									<div v-else>
+										<b-badge variant="danger">In-Active</b-badge>
+									</div>
                                 </template>
 
                                 <template v-slot:cell(actions)="row">
-                                    <!-- <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
+                                    <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
                                         <b-icon icon="pencil-fill"></b-icon>  Edit Details
                                     </b-button>
                                     <b-button size="sm" @click="row.toggleDetails">
                                         <b-icon icon="eye-fill"></b-icon>  {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-                                    </b-button> -->
-									<b-button size="sm" class="ml-2" @click="row.toggleDetails">
+                                    </b-button>
+									<b-button size="sm" class="ml-2">
                                         <b-icon icon="trash-fill"></b-icon>  Delete
                                     </b-button>
                                 </template>
@@ -113,30 +95,26 @@
 
                             <!-- Edit modal -->
                             <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-                                <pre>{{ infoModal.content }}</pre>
+                                <!-- <pre>{{ infoModal.content }}</pre> -->
 								<b-form @submit="onSubmit" @reset="onReset" v-if="show">
 									<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" type="text" required></b-form-input>
+										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" class="form-control" type="text" required></b-form-input>
 									</b-form-group>
 
-									<b-form-group id="input-group-1" label="Lastname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.lastname" value="mike" type="text" required></b-form-input>
+									<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
+										<b-form-input id="input-2" v-model="form.lastname" value="mike" class="form-control" type="text" required></b-form-input>
 									</b-form-group>
 
-									<b-form-group id="input-group-1" label="Email:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.email" value="mike" type="email" required></b-form-input>
+									<b-form-group id="input-group-3" label="Email:" label-for="input-3">
+										<b-form-input id="input-3" v-model="form.email" value="mike" class="form-control" type="email" required></b-form-input>
 									</b-form-group>
 
-									<b-form-group id="input-group-1" label="Password:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.password" value="mike" type="password" required></b-form-input>
+									<b-form-group id="input-group-4" label="Phone:" label-for="input-4">
+										<b-form-input id="input-4" v-model="form.phone" class="form-control" value="mike" type="text" required></b-form-input>
 									</b-form-group>
 
-									<b-form-group id="input-group-2" label="Role:" label-for="input-2">
-										<b-form-select>
-											<b-form-option value="admin"> Admin</b-form-option>
-											<b-form-option value="administrator"> Administrator</b-form-option>
-											<b-form-option value="accountant"> Accountant</b-form-option>
-										</b-form-select>
+									<b-form-group id="input-group-4" label="Password:" label-for="input-4">
+										<b-form-input id="input-4" v-model="form.password" class="form-control" value="mike" type="password" required></b-form-input>
 									</b-form-group>
 
 									<b-form-group>
@@ -183,6 +161,7 @@
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
+					{ key: "created_at", label: "Member Since", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -207,7 +186,7 @@
 					lastname: "",
 					email: "",
 					password: "",
-					role: "",
+					phone: "",
 				},
 			};
 		},
@@ -230,7 +209,7 @@
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
 			axios
-				.get("/v1/users")
+				.get("/v1/owners")
 				.then((res) => {
 					this.users = res.data.data;
 					//console.log(res);
@@ -247,8 +226,11 @@
 			onReset(evt) {
 				evt.preventDefault();
 				// Reset our form values
+				this.form.firstname = "";
+				this.form.lastname = "";
 				this.form.email = "";
 				this.form.password = "";
+				this.form.phone = "";
 				// Trick to reset/clear native browser form validation state
 				this.show = false;
 				this.$nextTick(() => {

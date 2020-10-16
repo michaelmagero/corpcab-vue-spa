@@ -79,6 +79,76 @@ const routes = [
     }
   },
   {
+    path: '/admin/drivers',
+    name: 'Driver',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Driver')
+    }
+  },
+  {
+    path: '/admin/owners',
+    name: 'Owner',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Owner')
+    }
+  },
+  {
+    path: '/admin/vehicles',
+    name: 'Vehicle',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Vehicle')
+    }
+  },
+  {
+    path: '/admin/service',
+    name: 'Service',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Service')
+    }
+  },
+  {
+    path: '/admin/documents',
+    name: 'Document',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Document')
+    }
+  },
+  {
+    path: '/admin/expenses',
+    name: 'Expense',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Expense')
+    }
+  },
+  {
+    path: '/admin/expenditures',
+    name: 'Expenditure',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: function () {
+      return import(/* webpackChunkName: "about" */ '../views/admin/Expenditure')
+    }
+  },
+  {
     path: '/admin/payment',
     name: 'Payment',
     // route level code-splitting

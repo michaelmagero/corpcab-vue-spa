@@ -5,9 +5,9 @@
         <div class="container">
             <div class="row mt-5">
                 <div class="col-md-4">
-                    <h1>Staff</h1>
+                    <h1>Drivers</h1>
 					<b-button size="sm" @click="info($event.target)">
-						<b-icon icon="people-fill"></b-icon>  Create Staff
+						<b-icon icon="people-fill"></b-icon>  Create Driver
 					</b-button>
                 </div>
                 <div class="col-md-4"></div>
@@ -43,6 +43,7 @@
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
+									<b-img class="avatar" :src=" '/src/assets/uploads/profile_picture/' + row.item.profile_picture "></b-img>
                                     {{ row.item.name + " " + row.item.lastname }}
                                 </template>
 
@@ -94,35 +95,99 @@
 
 
                             <!-- Edit modal -->
-                            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-                                <pre>{{ infoModal.content }}</pre>
+                            <b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+                                <!-- <pre>{{ infoModal.content }}</pre> -->
 								<b-form @submit="onSubmit" @reset="onReset" v-if="show">
-									<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" class="form-control" type="text" required></b-form-input>
-									</b-form-group>
+                                        <div class="row">
+                                            <div class="col-md-6">
+									            <b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
+										            <b-form-input id="input-1" v-model="form.firstname" class="form-control" type="text" required></b-form-input>
+									            </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+									            <b-form-group id="input-group-2" label="Middlename:" label-for="input-2">
+										            <b-form-input id="input-2" v-model="form.middlename" class="form-control" type="text" required></b-form-input>
+									            </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-										<b-form-input id="input-2" v-model="form.lastname" value="mike" class="form-control" type="text" required></b-form-input>
-									</b-form-group>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-3" label="Lastname:" label-for="input-3">
+                                                    <b-form-input id="input-3" v-model="form.lastname" class="form-control" type="text" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-4" label="Profile Photo:" label-for="input-4">
+                                                    <b-file id="input-4" type="file" v-model="form.profile_picture" class="form-control"></b-file>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-										<b-form-input id="input-3" v-model="form.email" value="mike" class="form-control" type="email" required></b-form-input>
-									</b-form-group>
 
-									<b-form-group id="input-group-4" label="Password:" label-for="input-4">
-										<b-form-input id="input-4" v-model="form.password" class="form-control" value="mike" type="password" required></b-form-input>
-									</b-form-group>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-5" label="National ID:" label-for="input-5">
+                                                    <b-form-input id="input-5" v-model="form.national_id" class="form-control" type="text" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-6" label="Phone:" label-for="input-6">
+                                                    <b-form-input id="input-6" v-model="form.phone" class="form-control" type="email" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group id="input-group-5" label="Role:" label-for="input-5">
-										<select class="form-control">
-											<option v-for="role in roles" v-bind:value="role.vaue">{{ role.text }}</option>
-										</select>
-									</b-form-group>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-7" label="Email:" label-for="input-7">
+                                                    <b-form-input id="input-7" v-model="form.email" class="form-control" type="email" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-8" label="Password:" label-for="input-8">
+                                                    <b-form-input id="input-8" v-model="form.password" class="form-control" type="password" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group>
-										<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
-										<b-button type="reset" variant="danger">Reset</b-button>
-									</b-form-group>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-9" label="Status:" label-for="input-9">
+                                                    <select id="input-9" class="form-control">
+                                                        <option v-for="state in status" v-bind:value="state.vaue">{{ state.text }}</option>
+                                                    </select>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-10" label="Driver License:" label-for="input-10">
+                                                    <b-file id="input-10" type="file" class="form-control"></b-file>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-11" label="Good Conduct Cert:" label-for="input-11">
+                                                    <b-file id="input-11" type="file" class="form-control"></b-file>
+                                                </b-form-group>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-12" label="PSV:" label-for="input-12">
+                                                    <b-file id="input-12" type="file" class="form-control"></b-file>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+
+                                        <b-form-group>
+                                            <b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+                                            <b-button type="reset" variant="danger">Reset</b-button>
+                                        </b-form-group>
 								</b-form>
                             </b-modal>
                         </b-container>
@@ -163,9 +228,8 @@
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
-					{ key: "role", label: "Role", sortable: true },
 					{ key: "status", label: "Status", sortable: true },
-					{ key: "created_at", label: "Created At", sortable: true },
+					{ key: "created_at", label: "Registered", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -187,16 +251,22 @@
 				show: true,
 				form: {
 					firstname: "",
+					middlename: "",
 					lastname: "",
+					profile_photo: "",
+					national_id: "",
+					phone: "",
 					email: "",
 					password: "",
-					role: "",
+					status: "",
+					driver_license: "",
+					good_conduct_cert: "",
+					psv_license: "",
 				},
-				roles: [
+				status: [
 					{ text: "Select Role" },
-					{ text: "Admin", value: "Admin" },
-					{ text: "Administrator", value: "Administrator" },
-					{ text: "Accountant", value: "Accountant" },
+					{ text: "Active", value: "Active" },
+					{ text: "In-Active", value: "In-Active" },
 				],
 			};
 		},
@@ -219,7 +289,7 @@
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
 			axios
-				.get("/v1/users")
+				.get("/v1/drivers")
 				.then((res) => {
 					this.users = res.data.data;
 					//console.log(res);
@@ -236,8 +306,18 @@
 			onReset(evt) {
 				evt.preventDefault();
 				// Reset our form values
+				this.form.firstname = "";
+				this.form.middlename = "";
+				this.form.lastname = "";
+				this.form.profile_photo = "";
+				this.form.national_id = "";
+				this.form.phone = "";
 				this.form.email = "";
 				this.form.password = "";
+				this.form.status = "";
+				this.form.driver_license = "";
+				this.form.good_conduct_cert = "";
+				this.form.psv_license = "";
 				// Trick to reset/clear native browser form validation state
 				this.show = false;
 				this.$nextTick(() => {

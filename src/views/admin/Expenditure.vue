@@ -5,7 +5,10 @@
         <div class="container">
             <div class="row mt-5">
                 <div class="col-md-4">
-                    <h1>Payments</h1>
+                    <h1>Expenditures</h1>
+					<b-button size="sm" @click="info($event.target)">
+						<b-icon icon="wallet-fill"></b-icon>  Create Expenditure
+					</b-button>
                 </div>
                 <div class="col-md-4"></div>
                 <div class="col-md-3 mt-4 ml-5">
@@ -36,52 +39,36 @@
                             </b-row>
 
                             <!-- Main table element -->
-                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="users" :fields="fields" :current-page="currentPage"
+                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="expenditures" :fields="fields" :current-page="currentPage"
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
-									<b-img class="avatar" src="https://placeholder.it/150x150"></b-img>
-                                    {{ row.item.name + " " + row.item.lastname }}
-									<div class="row ml-5">
-										<div class="col-md-6">
-											<span>Total</span>
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											Today
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											This Week
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
-									<div class="row ml-5">
-										<div class="col-md-6">
-											This Month
-										</div>
-										<div class="col-md-6">Ksh 5000</div>
-									</div>
+									<b-img class="avatar" :src=" '/src/assets/uploads/profile_picture/' + row.item.vehicle_image "></b-img>
+                                    {{ row.item.make + " " + row.item.model }}
+                                </template>
+
+                                <template v-slot:cell(driver_id)="row">
+                                    {{ row.item.driver_id.name + " " + row.item.driver_id.lastname }}
                                 </template>
 
                                 <template v-slot:cell(status)="row">
-                                    <b-badge variant="danger" :show="row.item.status ? '1' : '0' "> 
-										<strong>In Active</strong>
-									</b-badge>
+                                    <div v-if="row.item.status == 0">
+										<b-badge variant="danger">In Active</b-badge>
+									</div>
+
+									<div v-else>
+										<b-badge variant="success">Active</b-badge>
+									</div>
                                 </template>
 
                                 <template v-slot:cell(actions)="row">
-                                    <!-- <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
+                                    <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
                                         <b-icon icon="pencil-fill"></b-icon>  Edit Details
                                     </b-button>
                                     <b-button size="sm" @click="row.toggleDetails">
                                         <b-icon icon="eye-fill"></b-icon>  {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-                                    </b-button> -->
-									<b-button size="sm" class="ml-2" @click="row.toggleDetails">
+                                    </b-button>
+									<b-button size="sm" class="ml-2">
                                         <b-icon icon="trash-fill"></b-icon>  Delete
                                     </b-button>
                                 </template>
@@ -112,37 +99,47 @@
 
 
                             <!-- Edit modal -->
-                            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-                                <pre>{{ infoModal.content }}</pre>
+                            <b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+                                <!-- <pre>{{ infoModal.content }}</pre> -->
 								<b-form @submit="onSubmit" @reset="onReset" v-if="show">
-									<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" type="text" required></b-form-input>
-									</b-form-group>
+                                        
 
-									<b-form-group id="input-group-1" label="Lastname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.lastname" value="mike" type="text" required></b-form-input>
-									</b-form-group>
+                                        <div class="row">
 
-									<b-form-group id="input-group-1" label="Email:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.email" value="mike" type="email" required></b-form-input>
-									</b-form-group>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-5" label="Paid To:" label-for="input-5">
+                                                    <b-form-input id="input-5" v-model="form.make" class="form-control" type="text" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
 
-									<b-form-group id="input-group-1" label="Password:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.password" value="mike" type="password" required></b-form-input>
-									</b-form-group>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-5" label="Expenditure:" label-for="input-5">
+                                                    <b-form-input id="input-5" v-model="form.make" class="form-control" type="text" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group id="input-group-2" label="Role:" label-for="input-2">
-										<b-form-select>
-											<b-form-option value="admin"> Admin</b-form-option>
-											<b-form-option value="administrator"> Administrator</b-form-option>
-											<b-form-option value="accountant"> Accountant</b-form-option>
-										</b-form-select>
-									</b-form-group>
 
-									<b-form-group>
-										<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
-										<b-button type="reset" variant="danger">Reset</b-button>
-									</b-form-group>
+                                        <div class="row">
+                                        
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-5" label="Amount:" label-for="input-5">
+                                                    <b-form-input id="input-5" v-model="form.make" class="form-control" type="text" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-11" label="Receipts:" label-for="input-11">
+                                                    <b-file id="input-11" type="file" class="form-control"></b-file>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+
+                                        <b-form-group>
+                                            <b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+                                            <b-button type="reset" variant="danger">Reset</b-button>
+                                        </b-form-group>
 								</b-form>
                             </b-modal>
                         </b-container>
@@ -179,10 +176,14 @@
 		data() {
 			return {
 				//tables data
-				users: [],
+				expenditures: [],
+				vehicles: [],
+				drivers: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
-					{ key: "name", label: "Names", sortable: true },
+					{ key: "paid_to", label: "Paid To", sortable: true },
+					{ key: "expenditure", label: "Expenditure", sortable: true },
+					{ key: "amount", label: "Amount", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -203,12 +204,35 @@
 				//edit form data
 				show: true,
 				form: {
-					firstname: "",
-					lastname: "",
-					email: "",
-					password: "",
-					role: "",
+					vehicle_image: "",
+					registration_no: "",
+					owner_id: "",
+					driver_id: "",
+					make: "",
+					model: "",
+					yom: "",
+					color: "",
+					fuel_type: "",
+					status: "",
+					logobook: "",
+					insurance_sticker: "",
+					uber_inspection: "",
+					ntsa_inspection: "",
 				},
+				status: [
+					{ text: "Select Role" },
+					{ text: "Active", value: "Active" },
+					{ text: "In-Active", value: "In-Active" },
+				],
+				docs: [
+					{ text: "Select Document" },
+					{ text: "Psv License", value: "psv" },
+					{ text: "Driver License", value: "driver_license" },
+					{ text: "Good Conduct Cert.", value: "good_conduct" },
+					{ text: "Insurance Sticker", value: "insurance_sticker" },
+					{ text: "NTSA Inspection", value: "ntsa_inspection" },
+					{ text: "Uber Inspection", value: "uber_inspection" },
+				],
 			};
 		},
 
@@ -229,11 +253,13 @@
 		mounted() {
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
+
+			//documents
 			axios
-				.get("/v1/users")
+				.get("/v1/expenditures")
 				.then((res) => {
-					this.users = res.data.data;
-					//console.log(res);
+					this.expenditures = res.data.data;
+					console.log(res);
 				})
 				.catch((err) => {
 					console.error(err);
@@ -247,8 +273,20 @@
 			onReset(evt) {
 				evt.preventDefault();
 				// Reset our form values
-				this.form.email = "";
-				this.form.password = "";
+				this.form.vehicle_image = "";
+				this.form.registration_no = "";
+				this.form.owner_id = "";
+				this.form.driver_id = "";
+				this.form.make = "";
+				this.form.model = "";
+				this.form.yom = "";
+				this.form.color = "";
+				this.form.fuel_type = "";
+				this.form.status = "";
+				this.form.logobook = "";
+				this.form.insurance_sticker = "";
+				this.form.uber_inspection = "";
+				this.form.ntsa_inspection = "";
 				// Trick to reset/clear native browser form validation state
 				this.show = false;
 				this.$nextTick(() => {

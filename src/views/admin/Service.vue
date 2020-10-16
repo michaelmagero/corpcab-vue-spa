@@ -5,9 +5,9 @@
         <div class="container">
             <div class="row mt-5">
                 <div class="col-md-4">
-                    <h1>Staff</h1>
+                    <h1>Service</h1>
 					<b-button size="sm" @click="info($event.target)">
-						<b-icon icon="people-fill"></b-icon>  Create Staff
+						<b-icon icon="wrench"></b-icon>  Create Service
 					</b-button>
                 </div>
                 <div class="col-md-4"></div>
@@ -39,20 +39,25 @@
                             </b-row>
 
                             <!-- Main table element -->
-                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="users" :fields="fields" :current-page="currentPage"
+                            <b-table class="mt-5" bordered striped show-empty small stacked="md" :items="services" :fields="fields" :current-page="currentPage"
                             :per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
                             :sort-direction="sortDirection" @filtered="onFiltered">
                                 <template v-slot:cell(name)="row">
-                                    {{ row.item.name + " " + row.item.lastname }}
+									<b-img class="avatar" :src=" '/src/assets/uploads/profile_picture/' + row.item.vehicle_image "></b-img>
+                                    {{ row.item.make + " " + row.item.model }}
+                                </template>
+
+                                <template v-slot:cell(driver_id)="row">
+                                    {{ row.item.driver_id.name + " " + row.item.driver_id.lastname }}
                                 </template>
 
                                 <template v-slot:cell(status)="row">
-                                    <div v-if="row.item.status == 1">
-										<b-badge variant="success">Active</b-badge>
+                                    <div v-if="row.item.status == 0">
+										<b-badge variant="danger">In Active</b-badge>
 									</div>
 
 									<div v-else>
-										<b-badge variant="danger">In-Active</b-badge>
+										<b-badge variant="success">Active</b-badge>
 									</div>
                                 </template>
 
@@ -94,35 +99,70 @@
 
 
                             <!-- Edit modal -->
-                            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-                                <pre>{{ infoModal.content }}</pre>
+                            <b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+                                <!-- <pre>{{ infoModal.content }}</pre> -->
 								<b-form @submit="onSubmit" @reset="onReset" v-if="show">
-									<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-										<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" class="form-control" type="text" required></b-form-input>
-									</b-form-group>
+                                        
 
-									<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-										<b-form-input id="input-2" v-model="form.lastname" value="mike" class="form-control" type="text" required></b-form-input>
-									</b-form-group>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-3" label="Vehicle Registration:" label-for="input-3">
 
-									<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-										<b-form-input id="input-3" v-model="form.email" value="mike" class="form-control" type="email" required></b-form-input>
-									</b-form-group>
+                                                    <select id="input-3" class="form-control">
+                                                        <option disabled>Select Owner</option>
+                                                        <option v-for="vehicle in vehicles" v-bind:value="vehicle.value">{{ vehicle.registration_no }}</option>
+                                                    </select>
+                                                </b-form-group>
+                                            </div>
 
-									<b-form-group id="input-group-4" label="Password:" label-for="input-4">
-										<b-form-input id="input-4" v-model="form.password" class="form-control" value="mike" type="password" required></b-form-input>
-									</b-form-group>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-4" label="Service Date:" label-for="input-4">
+                                                    <b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
 
-									<b-form-group id="input-group-5" label="Role:" label-for="input-5">
-										<select class="form-control">
-											<option v-for="role in roles" v-bind:value="role.vaue">{{ role.text }}</option>
-										</select>
-									</b-form-group>
 
-									<b-form-group>
-										<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
-										<b-button type="reset" variant="danger">Reset</b-button>
-									</b-form-group>
+                                        <div class="row">
+                                            
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-6" label="Current Odometer Reading:" label-for="input-6">
+                                                    <b-form-input id="input-6" v-model="form.current_odometer_reading" class="form-control" type="email" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-6" label="Kilometres Serviced:" label-for="input-6">
+                                                    <b-form-input id="input-6" v-model="form.kms_serviced" class="form-control" type="email" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-6" label="Next Service (KMS):" label-for="input-6">
+                                                    <b-form-input id="input-6" v-model="form.next_kms_service" class="form-control" type="email" required></b-form-input>
+                                                </b-form-group>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-4" label="Reminder Date:" label-for="input-4">
+                                                    <b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <b-form-group id="input-group-5" label="Battery Service:" label-for="input-5">
+                                                    <b-checkbox>Changed</b-checkbox>
+                                                </b-form-group>
+                                            </div>
+                                        </div>
+
+
+                                        <b-form-group>
+                                            <b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+                                            <b-button type="reset" variant="danger">Reset</b-button>
+                                        </b-form-group>
 								</b-form>
                             </b-modal>
                         </b-container>
@@ -159,13 +199,13 @@
 		data() {
 			return {
 				//tables data
-				users: [],
+				services: [],
+				vehicles: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
-					{ key: "name", label: "Names", sortable: true },
-					{ key: "role", label: "Role", sortable: true },
+					{ key: "vehicle_registration", label: "Vehicle", sortable: true },
+					{ key: "service_date", label: "Service Date", sortable: true },
 					{ key: "status", label: "Status", sortable: true },
-					{ key: "created_at", label: "Created At", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -186,17 +226,19 @@
 				//edit form data
 				show: true,
 				form: {
-					firstname: "",
-					lastname: "",
-					email: "",
-					password: "",
-					role: "",
+					vehicle_registration: "",
+					service_date: "",
+					current_odometer_reading: "",
+					kms_serviced: "",
+					next_kms_service: "",
+					remider_date: "",
+					battery_service: "",
 				},
-				roles: [
+				status: [
 					{ text: "Select Role" },
-					{ text: "Admin", value: "Admin" },
-					{ text: "Administrator", value: "Administrator" },
-					{ text: "Accountant", value: "Accountant" },
+					{ text: "Active", value: "Active" },
+					{ text: "In-Garage", value: "In-Garage" },
+					{ text: "Out Of Service", value: "Out Of Service" },
 				],
 			};
 		},
@@ -218,11 +260,24 @@
 		mounted() {
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
+
+			//vehicles
 			axios
-				.get("/v1/users")
+				.get("/v1/services")
 				.then((res) => {
-					this.users = res.data.data;
-					//console.log(res);
+					this.services = res.data.data;
+					console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+
+			//owners
+			axios
+				.get("/v1/vehicles")
+				.then((result) => {
+					this.vehicles = result.data.data;
+					//console.log(result);
 				})
 				.catch((err) => {
 					console.error(err);
@@ -236,8 +291,13 @@
 			onReset(evt) {
 				evt.preventDefault();
 				// Reset our form values
-				this.form.email = "";
-				this.form.password = "";
+				this.form.vehicle_registration = "";
+				this.form.service_date = "";
+				this.form.current_odometer_reading = "";
+				this.form.kms_serviced = "";
+				this.form.next_kms_service = "";
+				this.form.remider_date = "";
+				this.form.battery_service = "";
 				// Trick to reset/clear native browser form validation state
 				this.show = false;
 				this.$nextTick(() => {
