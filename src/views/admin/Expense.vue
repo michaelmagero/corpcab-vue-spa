@@ -3,9 +3,9 @@
         <Dashboard />
 
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Expenses</h1>
-				<b-button size="md" @click="info($event.target)">
+				<b-button size="md" @click="info($event.target)" class="ml-3">
 					<b-icon icon="cash"></b-icon>  Create Expense
 				</b-button>
             </div>
@@ -35,7 +35,7 @@
 								</b-row>
 
 								<!-- Main table element -->
-								<b-table class="mt-5" bordered striped show-empty small stacked="md" :items="expenses" :fields="fields" :current-page="currentPage"
+								<b-table class="mt-5" bordered striped show-empty stacked="md" :items="expenses" :fields="fields" :current-page="currentPage"
 								:per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
 								:sort-direction="sortDirection" @filtered="onFiltered">
 									<template v-slot:cell(name)="row">
@@ -58,13 +58,13 @@
 									</template>
 
 									<template v-slot:cell(actions)="row">
-										<b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mr-2">
+										<b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mb-1">
 											<b-icon icon="pencil-fill"></b-icon>  Edit Details
 										</b-button>
-										<b-button size="sm" @click="row.toggleDetails">
-											<b-icon icon="eye-fill"></b-icon>  {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
+											{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
 										</b-button>
-										<b-button size="sm" class="ml-2">
+										<b-button size="sm" class="ml-2 mb-1">
 											<b-icon icon="trash-fill"></b-icon>  Delete
 										</b-button>
 									</template>

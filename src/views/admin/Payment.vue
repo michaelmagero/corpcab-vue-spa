@@ -31,11 +31,11 @@
 								</b-row>
 
 								<!-- Main table element -->
-								<b-table class="mt-5" bordered striped show-empty small stacked="md" :items="drivers" :fields="fields" :current-page="currentPage"
+								<b-table class="mt-5" bordered striped show-empty stacked="md" :items="drivers" :fields="fields" :current-page="currentPage"
 								:per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
 								:sort-direction="sortDirection" @filtered="onFiltered">
 									<template v-slot:cell(name)="row">
-										<b-img class="avatar" :src=" '/src/assets/uploads/profile_picture/' + row.item.profile_picture "></b-img>
+										<b-img class="avatar" :src="url"></b-img>
 
 										{{ row.item.name + " " + row.item.lastname }}
 
@@ -73,10 +73,10 @@
 
 									<template v-slot:cell(actions)="row">
 										
-										<b-button size="sm" @click="row.toggleDetails">
-											<b-icon icon="eye-fill"></b-icon>  {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
+											{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
 										</b-button>
-										<b-button size="sm" class="ml-2" @click="row.toggleDetails">
+										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
 											<b-icon icon="trash-fill"></b-icon>  Delete
 										</b-button>
 									</template>
@@ -116,8 +116,8 @@
 
 <style scoped>
 	.avatar {
-		width: 32px;
-		height: 32px;
+		width: 40px;
+		height: 40px;
 		border-radius: 50%;
 	}
 
@@ -173,6 +173,11 @@
 					.map((f) => {
 						return { text: f.label, value: f.key };
 					});
+			},
+
+			url: function () {
+				let theUrl = "http://via.placeholder.com/350x150";
+				return theUrl;
 			},
 		},
 		mounted() {

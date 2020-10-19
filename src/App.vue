@@ -5,7 +5,17 @@
 </template>
 
 <style>
+	@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+	body,
+	html {
+		font-family: "Poppins", sans-serif;
+	}
 	#app {
-		background-color: #f8f9fa;
+		background-color: #f2f3f8;
 	}
 </style>
+
+<script>
+	export default {};
+</script>
