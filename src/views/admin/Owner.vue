@@ -34,7 +34,7 @@
 								</b-row>
 
 								<!-- Main table element -->
-								<b-table class="mt-5" bordered striped show-empty stacked="md" :items="users" :fields="fields" :current-page="currentPage"
+								<b-table class="mt-5" bordered striped show-empty stacked="md" :items="owners" :fields="fields" :current-page="currentPage"
 								:per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
 								:sort-direction="sortDirection" @filtered="onFiltered">
 									<template v-slot:cell(name)="row">
@@ -80,7 +80,7 @@
 									
 									<b-col md="6"></b-col>
 									<b-col sm="7" md="3" class="my-1">
-										<b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"></b-pagination>
+										<b-pagination first-text="First" prev-text="Prev" next-text="Next" last-text="Last" v-model="currentPage" :total-rows="rows" :per-page="perPage" align="fill" size="sm" class="my-0"></b-pagination>
 									</b-col>
 								</b-row>
 
@@ -150,7 +150,7 @@
 		data() {
 			return {
 				//tables data
-				users: [],
+				owners: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
@@ -189,6 +189,9 @@
 		},
 
 		computed: {
+			rows() {
+				return this.owners.length;
+			},
 			sortOptions() {
 				// Create an options list from our fields
 				return this.fields
@@ -204,7 +207,7 @@
 			axios
 				.get("/v1/owners")
 				.then((res) => {
-					this.users = res.data.data;
+					this.owners = res.data.data;
 					//console.log(res);
 				})
 				.catch((err) => {

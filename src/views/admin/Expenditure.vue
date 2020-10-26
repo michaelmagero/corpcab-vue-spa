@@ -84,7 +84,7 @@
 									
 									<b-col md="6"></b-col>
 									<b-col sm="7" md="3" class="my-1">
-										<b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"></b-pagination>
+										<b-pagination first-text="First" prev-text="Prev" next-text="Next" last-text="Last" v-model="currentPage" :total-rows="rows" :per-page="perPage" align="fill" size="sm" class="my-0"></b-pagination>
 									</b-col>
 								</b-row>
 
@@ -203,6 +203,9 @@
 		},
 
 		computed: {
+			rows() {
+				return this.expenditures.length;
+			},
 			sortOptions() {
 				// Create an options list from our fields
 				return this.fields

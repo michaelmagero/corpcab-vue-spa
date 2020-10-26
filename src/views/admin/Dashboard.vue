@@ -28,7 +28,7 @@
                                                     </b-row>
                                                     <b-row>
                                                         <b-col md="8">
-                                                            <h5 class="card-title">20</h5>
+                                                            <h5 class="card-title">{{ cars }}</h5>
                                                         </b-col>
 
                                                         <b-col md="4">
@@ -53,7 +53,7 @@
                                                     </b-row>
                                                     <b-row>
                                                         <b-col md="8">
-                                                            <h5 class="card-title">20</h5>
+                                                            <h5 class="card-title">{{ drivers }}</h5>
                                                         </b-col>
 
                                                         <b-col md="4">
@@ -78,7 +78,7 @@
                                                     </b-row>
                                                     <b-row>
                                                         <b-col md="8">
-                                                            <h5 class="card-title">20</h5>
+                                                            <h5 class="card-title">{{ documents }}</h5>
                                                         </b-col>
 
                                                         <b-col md="4">
@@ -103,7 +103,7 @@
                                                     </b-row>
                                                     <b-row>
                                                         <b-col md="8">
-                                                            <h5 class="card-title">20</h5>
+                                                            <h5 class="card-title">{{ services }}</h5>
                                                         </b-col>
 
                                                         <b-col md="4">
@@ -144,6 +144,10 @@
 	export default {
 		data() {
 			return {
+				cars: "",
+				drivers: "",
+				documents: "",
+				services: "",
 				isActive: false,
 			};
 		},
@@ -156,7 +160,7 @@
 				.get("/v1/vehicles")
 				.then((res) => {
 					this.users = res.data.data;
-					console.log(res);
+					this.cars = res.data.data.length;
 				})
 				.catch((err) => {
 					console.error(err);
@@ -166,7 +170,7 @@
 				.get("/v1/drivers")
 				.then((resp) => {
 					this.users = resp.data.data;
-					console.log(resp);
+					this.drivers = resp.data.data.length;
 				})
 				.catch((err) => {
 					console.error(err);
@@ -176,7 +180,7 @@
 				.get("/v1/documents")
 				.then((respo) => {
 					this.users = respo.data.data;
-					console.log(respo);
+					this.documents = respo.data.data.length;
 				})
 				.catch((err) => {
 					console.error(err);
@@ -186,7 +190,7 @@
 				.get("/v1/services")
 				.then((response) => {
 					this.users = response.data.data;
-					console.log(response);
+					this.services = response.data.data.length;
 				})
 				.catch((err) => {
 					console.error(err);

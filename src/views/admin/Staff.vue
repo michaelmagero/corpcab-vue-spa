@@ -27,7 +27,9 @@
 											</b-input-group>
 										</b-form-group>
 									</b-col>
+
 									<b-col lg="4"></b-col>
+
 									<b-col lg="4" class="my-1">
 										<b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
 									</b-col>
@@ -35,7 +37,7 @@
 								</b-row>
 
 								<!-- Main table element -->
-								<b-table class="mt-5" bordered striped show-empty stacked="sm" :items="users" :fields="fields" :current-page="currentPage"
+								<b-table id="my-table" class="mt-5" bordered striped show-empty stacked="sm" :items="users" :fields="fields" :current-page="currentPage"
 								:per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
 								:sort-direction="sortDirection" @filtered="onFiltered">
 									<template v-slot:cell(name)="row">
@@ -81,7 +83,7 @@
 									
 									<b-col md="6"></b-col>
 									<b-col sm="7" md="3" class="my-1">
-										<b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" align="fill" size="sm" class="my-0"></b-pagination>
+										<b-pagination first-text="First" prev-text="Prev" next-text="Next" last-text="Last" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table" align="fill" size="sm" class="my-0"></b-pagination>
 									</b-col>
 								</b-row>
 
@@ -200,7 +202,7 @@
 				totalRows: 1,
 				currentPage: 1,
 				perPage: 15,
-				pageOptions: [15, 30, 50, 100],
+				pageOptions: [5, 10, 15],
 				sortBy: "",
 				sortDesc: false,
 				sortDirection: "asc",
@@ -246,6 +248,10 @@
 		},
 
 		computed: {
+			rows() {
+				return this.users.length;
+			},
+
 			sortOptions() {
 				// Create an options list from our fields
 				return this.fields
@@ -256,13 +262,16 @@
 			},
 		},
 		mounted() {
-			// Set the initial number of items
-			//this.totalRows = this.items.length;
 			axios
 				.get("/v1/users")
 				.then((res) => {
 					this.users = res.data.data;
-					//console.log(res);
+
+					// var values = res.data.data;
+
+					// values.forEach((element) => {
+					// 	//console.log(element.created_at);
+					// });
 				})
 				.catch((err) => {
 					console.error(err);
@@ -280,14 +289,17 @@
 						console.error(err);
 					});
 			},
+
 			editStaff(staff) {
 				this.staff = Vue.util.extend({}, staff); // deep clone to prevent modify the original object
 				this.editing = true;
 			},
+
 			onSubmit(evt) {
 				evt.preventDefault();
 				alert(JSON.stringify(this.form));
 			},
+
 			onReset(evt) {
 				evt.preventDefault();
 				// Reset our form values
@@ -302,15 +314,18 @@
 					this.show = true;
 				});
 			},
+
 			info(item, index, button) {
 				this.infoModal.title = "Edit";
 				this.infoModal.content = JSON.stringify(item, null, 3);
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
+
 			resetInfoModal() {
 				this.infoModal.title = "";
 				this.infoModal.content = "";
 			},
+
 			onFiltered(filteredItems) {
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
