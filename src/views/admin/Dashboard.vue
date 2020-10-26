@@ -138,6 +138,7 @@
 
 
 <script>
+	import axios from "axios";
 	import Layout from "@/layouts/DashLayout";
 
 	export default {
@@ -148,8 +149,48 @@
 		},
 
 		mounted() {
-			this.fillData();
-			this.renderChart(this.chartdata, this.options);
+			// this.fillData();
+			// this.renderChart(this.chartdata, this.options);
+
+			axios
+				.get("/v1/vehicles")
+				.then((res) => {
+					this.users = res.data.data;
+					console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+
+			axios
+				.get("/v1/drivers")
+				.then((resp) => {
+					this.users = resp.data.data;
+					console.log(resp);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+
+			axios
+				.get("/v1/documents")
+				.then((respo) => {
+					this.users = respo.data.data;
+					console.log(respo);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+
+			axios
+				.get("/v1/services")
+				.then((response) => {
+					this.users = response.data.data;
+					console.log(response);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		},
 		components: {
 			Layout,

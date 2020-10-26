@@ -76,7 +76,7 @@
 
                             <b-navbar-nav>
                                 <b-nav-item class="pb-2 pl-4">
-                                    <router-link to="/auth/signout" class="links"> <b-icon class="mr-2" icon="lock-fill"></b-icon> Sign Out </router-link>
+                                    <router-link to="/auth/signout" class="links"> <b-icon class="mr-2" icon="box-arrow-right"></b-icon> Sign Out </router-link>
                                 </b-nav-item>
                             </b-navbar-nav>
                         </div>

@@ -3,7 +3,7 @@
         <Dashboard />
 
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-3 border-bottom">
                 <h1 class="h2">Staff</h1>
 				<b-button size="md" @click="info($event.target)" class="ml-3">
 					<b-icon icon="people-fill"></b-icon>  Create Staff
@@ -18,7 +18,7 @@
 								<!-- User Interface controls -->
 								<b-row class="mt-5">
 									<b-col lg="4" class="my-1">
-										<b-form-group class="mb-2">
+										<b-form-group class="mb-3">
 											<b-input-group size="sm">
 												<b-form-input v-model="filter" type="search" id="filterInput" placeholder="Type to Search"></b-form-input>
 												<b-input-group-append>
@@ -29,7 +29,7 @@
 									</b-col>
 									<b-col lg="4"></b-col>
 									<b-col lg="4" class="my-1">
-										<b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-2" placeholder="Filter data by date"></b-form-datepicker>
+										<b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
 									</b-col>
 
 								</b-row>
@@ -44,24 +44,22 @@
 
 									<template v-slot:cell(status)="row">
 										<div v-if="row.item.status == 1">
-											<b-badge variant="success">Active</b-badge>
+											<b-badge pill variant="success">Active</b-badge>
 										</div>
 
 										<div v-else>
-											<b-badge variant="danger">In-Active</b-badge>
+											<b-badge pill variant="danger">In-Active</b-badge>
 										</div>
 									</template>
 
 									<template v-slot:cell(actions)="row">
-										<b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mb-1">
-											<b-icon icon="pencil-fill"></b-icon> Edit Details
-										</b-button>
-										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
-											 {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details
-										</b-button>
-										<b-button size="sm" class="ml-2 mb-1">
-											<b-icon icon="trash-fill"></b-icon> Delete
-										</b-button>
+										
+										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
+										
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+									
+										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
+
 									</template>
 
 									<template v-slot:row-details="row">
@@ -76,7 +74,7 @@
 
 								<b-row class="mt-5">
 									<b-col sm="5" md="3" class="my-1">
-										<b-form-group label="Show" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-size="sm" label-for="perPageSelect" class="mb-2">
+										<b-form-group label="Show" label-cols-sm="6" label-cols-md="4" label-cols-lg="3" label-size="sm" label-for="perPageSelect" class="mb-3">
 											<b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
 										</b-form-group>
 									</b-col>
@@ -88,37 +86,74 @@
 								</b-row>
 
 								<!-- Edit modal -->
-								<b-modal :id="infoModal.id" :title="infoModal.title" submit ok-only @hide="resetInfoModal">
-									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit="onSubmit" @reset="onReset" v-if="show">
-										<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-											<b-form-input id="input-1" v-model="form.firstname" :value="infoModal.content" class="form-control" type="text" required></b-form-input>
-										</b-form-group>
+									<div v-if="!editing">
+										<b-modal :id="infoModal.id" :title="infoModal.title" submit ok-only @hide="resetInfoModal">
+											<!-- <pre>{{ infoModal.content }}</pre> -->
+												<b-form @submit.prevent="addStaff" @reset="onReset" v-if="show" autocomplete="off">
+													<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
+														<b-form-input id="input-1" name="firstname" v-model="newStaff.firstname" class="form-control" type="text" required></b-form-input>
+													</b-form-group>
 
-										<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-											<b-form-input id="input-2" v-model="form.lastname" value="mike" class="form-control" type="text" required></b-form-input>
-										</b-form-group>
+													<b-form-group id="input-group-3" label="Lastname:" label-for="input-3">
+														<b-form-input id="input-3" name="lastname"  v-model="newStaff.lastname" class="form-control" type="text" required></b-form-input>
+													</b-form-group>
 
-										<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-											<b-form-input id="input-3" v-model="form.email" value="mike" class="form-control" type="email" required></b-form-input>
-										</b-form-group>
+													<b-form-group id="input-group-3" label="Email:" label-for="input-3">
+														<b-form-input id="input-3" name="email"  v-model="newStaff.email" class="form-control" type="email" required></b-form-input>
+													</b-form-group>
 
-										<b-form-group id="input-group-4" label="Password:" label-for="input-4">
-											<b-form-input id="input-4" v-model="form.password" class="form-control" value="mike" type="password" required></b-form-input>
-										</b-form-group>
+													<b-form-group id="input-group-4" label="Password:" label-for="input-4">
+														<b-form-input id="input-4" name="password" v-model="newStaff.password" class="form-control" type="password" required></b-form-input>
+													</b-form-group>
 
-										<b-form-group id="input-group-5" label="Role:" label-for="input-5">
-											<select class="form-control">
-												<option v-for="role in roles" v-bind:value="role.vaue">{{ role.text }}</option>
-											</select>
-										</b-form-group>
+													<b-form-group id="input-group-5" label="Role:" label-for="input-5">
+														<select class="form-control" name="role">
+															<option v-for="role in roles" v-bind:value="role.value">{{ role.text }}</option>
+														</select>
+													</b-form-group>
 
-										<b-form-group class="mt-5">
-											<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
-											<b-button type="reset" variant="danger">Reset</b-button>
-										</b-form-group>
-									</b-form>
-								</b-modal>
+													<b-form-group class="mt-5">
+														<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+														<b-button type="reset" variant="danger">Reset</b-button>
+													</b-form-group>
+												</b-form>
+										</b-modal>
+									</div>
+
+									<div v-else>
+										<b-modal :id="infoModal.id" :title="infoModal.title" submit ok-only @hide="resetInfoModal">
+											<!-- <pre>{{ infoModal.content }}</pre> -->
+												<b-form @submit.prevent="addStaff" @reset="onReset" v-if="show" autocomplete="off">
+													<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
+														<b-form-input id="input-1" name="firstname" v-model="newStaff.firstname" class="form-control" type="text" required></b-form-input>
+													</b-form-group>
+
+													<b-form-group id="input-group-3" label="Lastname:" label-for="input-3">
+														<b-form-input id="input-3" name="lastname"  v-model="newStaff.lastname" class="form-control" type="text" required></b-form-input>
+													</b-form-group>
+
+													<b-form-group id="input-group-3" label="Email:" label-for="input-3">
+														<b-form-input id="input-3" name="email"  v-model="newStaff.email" class="form-control" type="email" required></b-form-input>
+													</b-form-group>
+
+													<b-form-group id="input-group-4" label="Password:" label-for="input-4">
+														<b-form-input id="input-4" name="password" v-model="newStaff.password" class="form-control" type="password" required></b-form-input>
+													</b-form-group>
+
+													<b-form-group id="input-group-5" label="Role:" label-for="input-5">
+														<select class="form-control" name="role">
+															<option v-for="role in roles" v-bind:value="role.value">{{ role.text }}</option>
+														</select>
+													</b-form-group>
+
+													<b-form-group class="mt-5">
+														<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+														<b-button type="reset" variant="danger">Reset</b-button>
+													</b-form-group>
+												</b-form>
+										</b-modal>
+									</div>
+									
 							</b-container>
 						</b-card>
 					</b-col>
@@ -179,12 +214,23 @@
 
 				//edit form data
 				show: true,
+				editing: false,
 				form: {
 					firstname: "",
 					lastname: "",
 					email: "",
 					password: "",
 					role: "",
+				},
+				newStaff: {
+					firstname: "",
+					lastname: "",
+					email: "",
+					password: "",
+					role: "",
+				},
+				staff: {
+					edit: false,
 				},
 				roles: [
 					{ text: "Select Role" },
@@ -223,6 +269,21 @@
 				});
 		},
 		methods: {
+			addStaff() {
+				axios
+					.post("/v1/users")
+					.then((res) => {
+						this.newStaff = res.data.data;
+						console.log(res);
+					})
+					.catch((err) => {
+						console.error(err);
+					});
+			},
+			editStaff(staff) {
+				this.staff = Vue.util.extend({}, staff); // deep clone to prevent modify the original object
+				this.editing = true;
+			},
 			onSubmit(evt) {
 				evt.preventDefault();
 				alert(JSON.stringify(this.form));
@@ -243,7 +304,7 @@
 			},
 			info(item, index, button) {
 				this.infoModal.title = "Edit";
-				this.infoModal.content = JSON.stringify(item, null, 2);
+				this.infoModal.content = JSON.stringify(item, null, 3);
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 			resetInfoModal() {

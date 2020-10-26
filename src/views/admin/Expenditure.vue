@@ -47,24 +47,22 @@
 
 									<template v-slot:cell(status)="row">
 										<div v-if="row.item.status == 0">
-											<b-badge variant="danger">In Active</b-badge>
+											<b-badge pill variant="danger">In Active</b-badge>
 										</div>
 
 										<div v-else>
-											<b-badge variant="success">Active</b-badge>
+											<b-badge pill variant="success">Active</b-badge>
 										</div>
 									</template>
 
 									<template v-slot:cell(actions)="row">
-										<b-button size="sm" @click="info(row.item, row.index, $event.target)" class="ml-2 mb-1">
-											<b-icon icon="pencil-fill"></b-icon>  Edit Details
-										</b-button>
-										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
-											{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-										</b-button>
-										<b-button size="sm" class="ml-2 mb-1">
-											<b-icon icon="trash-fill"></b-icon>  Delete
-										</b-button>
+										
+										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
+										
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+									
+										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
+
 									</template>
 
 									<template v-slot:row-details="row">

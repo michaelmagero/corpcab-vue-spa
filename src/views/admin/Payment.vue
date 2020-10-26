@@ -30,6 +30,8 @@
 									</b-col>
 								</b-row>
 
+								{{ payments }}
+
 								<!-- Main table element -->
 								<b-table class="mt-5" bordered striped show-empty stacked="md" :items="drivers" :fields="fields" :current-page="currentPage"
 								:per-page="perPage" :filter="filter" :filter-included-fields="filterOn" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc"
@@ -72,13 +74,11 @@
 									</template>
 
 									<template v-slot:cell(actions)="row">
-										
-										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
-											{{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-										</b-button>
-										<b-button size="sm" @click="row.toggleDetails" class="ml-2 mb-1">
-											<b-icon icon="trash-fill"></b-icon>  Delete
-										</b-button>
+																				
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+									
+										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
+
 									</template>
 
 									<template v-slot:row-details="row">
@@ -139,6 +139,7 @@
 			return {
 				//tables data
 				drivers: [],
+				payments: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
@@ -184,10 +185,20 @@
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
 			axios
-				.get("/v1/drivers")
+				.get("http://127.0.0.1:8000/api/v1/drivers")
 				.then((res) => {
 					this.drivers = res.data.data;
 					//console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+
+			axios
+				.get("https://corpcab.co.ke/safdaraja/liveCallbackResponse.json")
+				.then((response) => {
+					this.payments = response.data;
+					console.log(response);
 				})
 				.catch((err) => {
 					console.error(err);
