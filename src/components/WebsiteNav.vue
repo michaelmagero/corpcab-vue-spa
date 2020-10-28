@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-navbar toggleable="lg" type="dark" variant="white" >
+        <b-navbar toggleable="lg" type="dark" variant="white" v-b-scrollspy="{offset:100, method:'auto'}" fixed="top">
             <b-container>
 
                 <b-navbar-brand><router-link to="/" class="links"><b-img class="logo" src="/img/logo.png"></b-img></router-link></b-navbar-brand>
@@ -9,9 +9,9 @@
 
                 <b-collapse id="nav-collapse" is-nav>
                     <b-navbar-nav>
-                        <b-nav-item><router-link to="/" class="links text-dark">Home</router-link></b-nav-item>
-                        <b-nav-item><router-link to="/about" class="links text-dark">About</router-link></b-nav-item>
-                        <b-nav-item><router-link to="/solutions" class="links text-dark">Solutions</router-link></b-nav-item>
+                        <b-nav-item> <router-link class="text-dark" to="/">Home</router-link>               </b-nav-item>
+                        <b-nav-item> <router-link class="text-dark" to="#about">About</router-link>         </b-nav-item>
+                        <b-nav-item> <router-link class="text-dark" to="#solutions">Solutions</router-link> </b-nav-item>
                     </b-navbar-nav>
 
                     <!-- Right aligned nav items -->
@@ -27,16 +27,39 @@
 </template>
 
 <style scoped>
-	.links {
-		font-size: 17px;
-	}
-
 	.logo {
 		width: 50px;
 		height: 50px;
 	}
+
+	.active {
+		color: #dc3545;
+		text-decoration: underline;
+	}
+	#scrollspy-example {
+		position: relative;
+		height: 200px;
+		overflow-y: scroll;
+		border: 1px solid blue;
+	}
 </style>
 
 <script>
-	export default {};
+	export default {
+		data() {
+			return {
+				targetActive: "",
+			};
+		},
+
+		computed: {},
+		methods: {
+			onActivate(target) {
+				console.log("Received Event: scrollspy::activate for target ", target);
+			},
+		},
+		created() {
+			this.$root.$on("scrollspy::activate", this.onActivate);
+		},
+	};
 </script>
