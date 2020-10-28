@@ -13,7 +13,7 @@
             <b-container fluid>
                 <b-row>
                     <b-col md="12">
-                        <b-card class="mt-5 mb-5 border-light rounded-0">
+                        <b-card class="mt-3 mb-5 border-light rounded-0">
                             <b-container fluid>
                                 <!-- User Interface controls -->
                                 <b-row class="mt-5">
@@ -286,7 +286,7 @@
 					});
 			},
 
-			url: function () {
+			url() {
 				let theUrl = "http://via.placeholder.com/350x150";
 				return theUrl;
 			},

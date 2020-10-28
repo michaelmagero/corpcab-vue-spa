@@ -13,7 +13,7 @@
 			<b-container fluid>
 				<b-row>
 					<b-col md="12">
-						<b-card class="mt-5 mb-5 border-light rounded-0">
+						<b-card class="mt-3 mb-5 border-light rounded-0">
 							<b-container fluid>
 								<!-- User Interface controls -->
 								<b-row class="mt-5">
@@ -31,7 +31,9 @@
 									<b-col lg="4"></b-col>
 
 									<b-col lg="4" class="my-1">
-										<b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
+										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="dateValue" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
+										     <p>Value: <b>'{{  formattedDate }}'</b></p>
+
 									</b-col>
 
 								</b-row>
@@ -184,12 +186,14 @@
 
 <script>
 	import axios from "axios";
+	import moment from "moment";
 	import Dashboard from "@/layouts/DashLayout";
 
 	export default {
 		data() {
 			return {
 				//tables data
+				dateValue: "",
 				users: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
@@ -202,7 +206,7 @@
 				totalRows: 1,
 				currentPage: 1,
 				perPage: 15,
-				pageOptions: [5, 10, 15],
+				pageOptions: [15, 30, 50, 100],
 				sortBy: "",
 				sortDesc: false,
 				sortDirection: "asc",
@@ -248,6 +252,10 @@
 		},
 
 		computed: {
+			formattedDate() {
+				return moment(this.dateValue).format("DD-MM-YYYY");
+			},
+
 			rows() {
 				return this.users.length;
 			},
@@ -255,7 +263,7 @@
 			sortOptions() {
 				// Create an options list from our fields
 				return this.fields
-					.filter((f) => f.sortable)
+					.filter((f) => f.created_at)
 					.map((f) => {
 						return { text: f.label, value: f.key };
 					});
@@ -266,12 +274,6 @@
 				.get("/v1/users")
 				.then((res) => {
 					this.users = res.data.data;
-
-					// var values = res.data.data;
-
-					// values.forEach((element) => {
-					// 	//console.log(element.created_at);
-					// });
 				})
 				.catch((err) => {
 					console.error(err);
@@ -330,6 +332,12 @@
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
 				this.currentPage = 1;
+			},
+
+			filteredList() {
+				return this.users.filter(
+					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
+				);
 			},
 		},
 	};

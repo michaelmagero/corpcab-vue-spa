@@ -8,6 +8,7 @@ import { faUserAstronaut } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import axios from 'axios'
+import moment from 'moment'
 
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -26,6 +27,9 @@ Vue.config.productionTip = false
 
 //axios base url definition
 axios.defaults.baseURL = 'http://127.0.0.1:8000/api';
+
+//use import js to pass dates format
+Vue.prototype.moment = moment;
 
 
 new Vue({

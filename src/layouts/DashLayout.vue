@@ -93,6 +93,7 @@
 <style scoped>
 	body {
 		font-size: 0.875rem;
+		height: 100%;
 	}
 
 	/** Sidebar*/

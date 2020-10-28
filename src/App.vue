@@ -4,15 +4,14 @@
   </div>
 </template>
 
-<style>
-	@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
-
+<style >
 	body,
 	html {
-		font-family: "Poppins", sans-serif;
+		height: 100%;
 	}
 	#app {
 		background-color: #f2f3f8;
+		height: 100%;
 	}
 </style>
 
