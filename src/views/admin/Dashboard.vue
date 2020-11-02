@@ -10,7 +10,7 @@
             <b-container fluid>
 				<b-row>
 					<b-col md="12">
-						<b-card class="mt-5 mb-5 border-light rounded-0">
+						<b-card class="mt-3 mb-5 border-light rounded-0">
                             <b-row>
                                 <b-container fluid>
                                     <b-row class="mt-5">
@@ -142,6 +142,7 @@
 	import Layout from "@/layouts/DashLayout";
 
 	export default {
+		name: "Dashboard",
 		data() {
 			return {
 				cars: "",

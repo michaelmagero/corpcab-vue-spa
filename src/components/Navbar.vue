@@ -10,17 +10,15 @@
                     <b-nav-item class="mt-1 mr-3"><router-link to="/register-owner" class="links">{{ new Date().toLocaleString() }}</router-link></b-nav-item>
 
                     <template>
-                        
-                        
                         <b-nav-item-dropdown right>
                             <!-- Using 'button-content' slot -->
                             <template v-slot:button-content>
                                 <span class="mr-1">Hello</span>
-                                <span class="links">Mike Magero</span>
+                                <span class="links">{{ user.name }} {{ user.lastname }}</span>
                                 <b-img class="avatar mr-1 ml-3" :src="url"></b-img>
                             </template>
                             <b-dropdown-item><router-link to="/" class="links"></router-link>  Profile</b-dropdown-item>
-                            <b-dropdown-item><router-link to="/" class="links"></router-link>  Sign Out</b-dropdown-item>
+                            <b-dropdown-item><router-link @click.prevent.native="signOut" to="" class="links">  Sign Out </router-link></b-dropdown-item>
                         </b-nav-item-dropdown>
                     </template>
                 </b-navbar-nav>
@@ -30,12 +28,6 @@
 </template>
 
 <style scoped>
-	@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
-
-	body,
-	html {
-		font-family: "Poppins", sans-serif;
-	}
 	#top-nav {
 		background-color: #fff;
 		color: #000;
@@ -53,11 +45,32 @@
 </style>
 
 <script>
+	import { mapGetters, mapActions } from "vuex";
+
 	export default {
 		computed: {
+			...mapGetters({
+				authenticated: "auth/authenticated",
+				user: "auth/user",
+			}),
+
 			url: function () {
 				let theUrl = "http://via.placeholder.com/350x150";
 				return theUrl;
+			},
+		},
+
+		methods: {
+			...mapActions({
+				signOutAction: "auth/signOut",
+			}),
+
+			signOut() {
+				this.signOutAction().then(() => {
+					this.$router.replace({
+						name: "Login",
+					});
+				});
 			},
 		},
 	};

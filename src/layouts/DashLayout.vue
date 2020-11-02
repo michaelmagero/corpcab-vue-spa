@@ -4,7 +4,7 @@
 
         <b-container fluid>
             <b-row>
-                <b-navbar toggleable="lg" md="3" lg="2" type="dark" id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-danger sidebar collapse" variant="danger">
+                <b-navbar toggleable="lg" md="3" lg="2" type="dark" id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse" >
                     <b-navbar-brand><router-link to="/admin/dashboard" class="navbar-brand ml-4">Corpcab Limited</router-link></b-navbar-brand>
                         <div class="sidebar-sticky pt-3">
                             <b-navbar-nav class="flex-column">
@@ -40,7 +40,7 @@
                                 </b-nav-item>
                                 <b-nav-item class="pb-2 pl-4">
                                     <router-link to="/admin/service" class="links">
-                                        <b-icon class="mr-2" icon="wrench"></b-icon>
+                                        <i class="fa fa-wrench mr-3"></i>
                                         Service
                                     </router-link>
                                 </b-nav-item>
@@ -91,13 +91,15 @@
 
 
 <style scoped>
-	body {
-		font-size: 0.875rem;
+	body,
+	html {
+		font-size: 16px;
 		height: 100%;
 	}
 
 	/** Sidebar*/
 	.sidebar {
+		background-color: #d61536;
 		position: fixed;
 		top: 0;
 		bottom: 0;

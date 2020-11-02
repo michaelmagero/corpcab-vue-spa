@@ -188,7 +188,7 @@
 			// Set the initial number of items
 			//this.totalRows = this.items.length;
 			axios
-				.get("http://127.0.0.1:8000/api/v1/drivers")
+				.get("v1/drivers")
 				.then((res) => {
 					this.drivers = res.data.data;
 					//console.log(res);
@@ -197,15 +197,12 @@
 					console.error(err);
 				});
 
-			axios
-				.get("https://corpcab.co.ke/safdaraja/liveCallbackResponse.json")
-				.then((response) => {
-					this.payments = response.data;
-					console.log(response);
-				})
-				.catch((err) => {
-					console.error(err);
-				});
+			// axios
+			// 	.get("https://corpcab.co.ke/safdaraja/liveCallbackResponse.json")
+			// 	.then((response) => {
+			// 		this.payments = response;
+			// 		console.log(response);
+			// 	});
 		},
 		methods: {
 			onSubmit(evt) {

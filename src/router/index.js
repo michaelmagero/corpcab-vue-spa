@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: function () {
       return import(/* webpackChunkName: "about" */ '../views/auth/Login')
+    },
+    beforeEnter: (to, from, next) => {
+      if (store.getters['auth/authenticated']) {
+        return next({
+          name: 'Dashboard'
+        })
+      }
+
+      next()
     }
   },
   {
@@ -56,6 +66,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: function () {
       return import(/* webpackChunkName: "about" */ '../views/admin/Dashboard')
+    },
+    beforeEnter: (to, from, next) => {
+      if (!store.getters['auth/authenticated']) {
+        return next({
+          name: 'Login'
+        })
+      }
+
+      next()
     }
   },
   {
