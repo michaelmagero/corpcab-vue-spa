@@ -73,13 +73,13 @@
 										</b-badge>
 									</template>
 
-									<template v-slot:cell(actions)="row">
+									<!-- <template v-slot:cell(actions)="row">
 																				
 										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
-									</template>
+									</template> -->
 
 									<template v-slot:row-details="row">
 										<b-card>
@@ -140,11 +140,7 @@
 				//tables data
 				drivers: [],
 				payments: [],
-				fields: [
-					{ key: "id", label: "ID", sortable: true },
-					{ key: "name", label: "Names", sortable: true },
-					{ key: "actions", label: "Actions" },
-				],
+				fields: [{ key: "name", label: "Names", sortable: true }],
 				totalRows: 1,
 				currentPage: 1,
 				perPage: 15,

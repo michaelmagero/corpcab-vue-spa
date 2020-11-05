@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Documents</h1>
-				<b-button size="md" @click="info($event.target)" class="ml-3">
+				<b-button size="md" @click="createDocument()" class="ml-3">
 					<b-icon icon="folder"></b-icon>  Create Document
 				</b-button>
             </div>
@@ -60,7 +60,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateDocument(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -90,16 +90,20 @@
 								</b-row>
 
 								<!-- Edit modal -->
-								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit="onSubmit" @reset="onReset" v-if="show">
+									<b-form @submit.prevent="editMode ? updateDocument() : createOupdateDocument()" v-if="show" autocomplete="off">
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-1" label="Document Type:" label-for="input-1">
 
-													<select id="input-1" class="form-control">
-														<option disabled>Select Owner</option>
-														<option v-for="doc in docs" v-bind:value="doc.value">{{ doc.text }}</option>
+													<select v-show="!editMode" class="form-control" name="document_type">
+														<option v-for="doc in docs" v-bind:key="doc.value">{{ doc.text }}</option>
+													</select>
+
+													<select  v-show="editMode" class="form-control" name="document_type">
+														<option v-show="editMode" v-for="doc in docs" v-bind:key="doc.value" selected>{{ doc.value }}</option>
+														<option v-show="!editMode" v-for="doc in docs" v-bind:key="doc.value">{{ doc.text }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
@@ -107,10 +111,16 @@
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Document Owner:" label-for="input-2">
 
-													<select id="input-2" class="form-control">
-														<option disabled>Select Owner</option>
-														<option v-for="vehicle in vehicles" v-bind:value="vehicle.value">{{ vehicle.registration_no }}</option>
-														<option v-for="driver in drivers" v-bind:value="driver.value">{{ driver.name }} {{ driver.middlename }} {{ driver.lastname }}</option>
+													<select v-show="!editMode" class="form-control" name="document_owner">
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+													</select>
+
+													<select  v-show="editMode" class="form-control" name="document_owner">
+														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.value }}</option>
+														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-show="editMode" v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.value }}</option>
+														<option v-show="!editMode" v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
@@ -140,7 +150,8 @@
 
 										<b-row class="mt-5 ml-1">
 											<b-form-group>
-												<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+												<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
+												<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
 												<b-button type="reset" variant="danger">Reset</b-button>
 											</b-form-group>
 										</b-row>
@@ -210,6 +221,8 @@
 				},
 
 				//edit form data
+				editMode: false,
+				title: true,
 				show: true,
 				form: {
 					document_type: "",
@@ -285,37 +298,33 @@
 				});
 		},
 		methods: {
-			onSubmit(evt) {
-				evt.preventDefault();
-				alert(JSON.stringify(this.form));
-			},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.document_type = "";
-				this.form.document_owner = "";
-				this.form.issue_date = "";
-				this.form.expiry_date = "";
-				this.form.reminder_date = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
-			},
-			info(item, index, button) {
-				this.infoModal.title = "Edit";
-				this.infoModal.content = JSON.stringify(item, null, 2);
-				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
-			},
-			resetInfoModal() {
-				this.infoModal.title = "";
-				this.infoModal.content = "";
-			},
+			//tables methods
 			onFiltered(filteredItems) {
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
 				this.currentPage = 1;
+			},
+
+			filteredList() {
+				return this.users.filter(
+					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
+				);
+			},
+
+			//form/modal methods
+
+			createDocument(item, index, button) {
+				this.editMode = false;
+				this.infoModal.content = item;
+				this.infoModal.title = "Create Document";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			updateDocument(item, index, button) {
+				this.editMode = true;
+				this.infoModal.content = item;
+				this.infoModal.title = "Edit Document";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 		},
 	};

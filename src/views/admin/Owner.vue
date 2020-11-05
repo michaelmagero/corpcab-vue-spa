@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Owner</h1>
-				<b-button size="md" @click="info($event.target)" class="ml-3">
+				<b-button size="md" @click="createOwner()" class="ml-3">
 					<b-icon icon="people-fill"></b-icon>  Create Owner
 				</b-button>
             </div>
@@ -55,7 +55,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateOwner(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -87,31 +87,32 @@
 
 
 								<!-- Edit modal -->
-								<b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+								<b-modal :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit="onSubmit" @reset="onReset" v-if="show">
+									<b-form @submit.prevent="editMode ? updateOwner() : createOupdateOwner()" v-if="show" autocomplete="off">
 										<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-											<b-form-input id="input-1" v-model="form.firstname" class="form-control" type="text" required></b-form-input>
+											<b-form-input id="input-1" v-model="infoModal.content.name" name="name" class="form-control" type="text" required></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-											<b-form-input id="input-2" v-model="form.lastname" class="form-control" type="text" required></b-form-input>
+											<b-form-input id="input-2" v-model="infoModal.content.lastname" name="lastname" class="form-control" type="text" required></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-											<b-form-input id="input-3" v-model="form.email" class="form-control" type="email" required></b-form-input>
+											<b-form-input id="input-3" v-model="infoModal.content.email" name="email" class="form-control" type="email" required></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-4" label="Phone:" label-for="input-4">
-											<b-form-input id="input-4" v-model="form.phone" class="form-control" type="text" required></b-form-input>
+											<b-form-input id="input-4" v-model="infoModal.content.phone" name="phone" class="form-control" type="text" required></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-5" label="Password:" label-for="input-5">
-											<b-form-input id="input-5" v-model="form.password" class="form-control" type="password" required></b-form-input>
+											<b-form-input id="input-5" v-model="infoModal.content.password" name="password" class="form-control" type="password" required></b-form-input>
 										</b-form-group>
 
 										<b-form-group>
-											<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+											<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
+											<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
 											<b-button type="reset" variant="danger">Reset</b-button>
 										</b-form-group>
 									</b-form>
@@ -173,9 +174,11 @@
 				},
 
 				//edit form data
+				editMode: false,
+				title: true,
 				show: true,
 				form: {
-					firstname: "",
+					name: "",
 					lastname: "",
 					email: "",
 					password: "",
@@ -215,37 +218,33 @@
 				});
 		},
 		methods: {
-			onSubmit(evt) {
-				evt.preventDefault();
-				alert(JSON.stringify(this.form));
-			},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.firstname = "";
-				this.form.lastname = "";
-				this.form.email = "";
-				this.form.password = "";
-				this.form.phone = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
-			},
-			info(item, index, button) {
-				this.infoModal.title = "Edit";
-				this.infoModal.content = JSON.stringify(item, null, 2);
-				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
-			},
-			resetInfoModal() {
-				this.infoModal.title = "";
-				this.infoModal.content = "";
-			},
+			//tables methods
 			onFiltered(filteredItems) {
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
 				this.currentPage = 1;
+			},
+
+			filteredList() {
+				return this.users.filter(
+					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
+				);
+			},
+
+			//form/modal methods
+
+			createOwner(item, index, button) {
+				this.editMode = false;
+				this.infoModal.content = item;
+				this.infoModal.title = "Create Owner";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			updateOwner(item, index, button) {
+				this.editMode = true;
+				this.infoModal.content = item;
+				this.infoModal.title = "Edit Owner";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 		},
 	};

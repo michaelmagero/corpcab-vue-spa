@@ -68,17 +68,17 @@
                                         Payments
                                     </router-link>
                                 </b-nav-item>
-                            </b-navbar-nav>
+                            
 
-                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-dark">
-                                <span>Settings</span>
-                            </h6>
-
-                            <b-navbar-nav>
+								<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-dark">
+									<span>Settings</span>
+								</h6>
+                            
                                 <b-nav-item class="pb-2 pl-4">
-                                    <router-link to="/auth/signout" class="links"> <b-icon class="mr-2" icon="box-arrow-right"></b-icon> Sign Out </router-link>
+                                    <router-link @click.prevent.native="signOut" to="" class="links"><b-icon class="mr-2" icon="box-arrow-right"></b-icon> Sign Out </router-link>
                                 </b-nav-item>
-                            </b-navbar-nav>
+								
+							</b-navbar-nav>
                         </div>
                 </b-navbar>
 
@@ -197,7 +197,9 @@
 </style>
 
 <script>
+	import { mapActions } from "vuex";
 	import Navbar from "@/components/Navbar";
+
 	export default {
 		data() {
 			return {
@@ -207,6 +209,20 @@
 
 		components: {
 			Navbar,
+		},
+
+		methods: {
+			...mapActions({
+				signOutAction: "auth/signOut",
+			}),
+
+			signOut() {
+				this.signOutAction().then(() => {
+					this.$router.replace({
+						name: "Login",
+					});
+				});
+			},
 		},
 	};
 </script>

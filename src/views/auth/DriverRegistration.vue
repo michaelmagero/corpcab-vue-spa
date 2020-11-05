@@ -11,12 +11,12 @@
 		<b-row>
 			<b-col md="8" offset-md="2">
 				<b-card class="border-light rounded-0 font-weight-bold" header="DRIVER REGISTRATION" header-bg-variant="danger" header-text-variant="white">
-					<b-form @submit.prevent="registerDriver" @reset="onReset" v-if="show" class="p-4" autocomplete="off">
+					<b-form @submit.prevent="register" class="p-4" autocomplete="off">
 
 						<b-row>
 							<b-col md="6">
 								<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-									<b-form-input class="form-control rounded-0" size="lg" id="input-1" v-model="form.firstname" type="text" required></b-form-input>
+									<b-form-input class="form-control rounded-0" size="lg" id="input-1" v-model="form.name" type="text" required></b-form-input>
 								</b-form-group>
 							</b-col>
 							<b-col md="6">
@@ -85,18 +85,19 @@
 </style>
 
 <script>
+	import axios from "axios";
+
 	export default {
 		data() {
 			return {
 				form: {
-					firstname: "",
+					name: "",
 					middlename: "",
 					lastname: "",
 					national_id: "",
 					email: "",
 					phone: "",
 				},
-				show: true,
 			};
 		},
 
@@ -107,21 +108,27 @@
 			},
 		},
 		methods: {
-			registerDriver() {},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.firstname = "";
-				this.form.middlename = "";
-				this.form.lastname = "";
-				this.form.national_id = "";
-				this.form.email = "";
-				this.form.phone = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
+			async register() {
+				// let response = await axios.post("v1/drivers");
+				// console.log(response);
+				await axios
+					.post("auth/register-driver", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Driver Registered Successfully",
+							type: "success",
+						});
+
+						this.$router.replace({
+							name: "Login",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+					});
 			},
 		},
 	};

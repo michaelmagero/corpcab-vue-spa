@@ -13,12 +13,12 @@
 		<b-row>
 			<b-col md="8" offset-md="2">
 				<b-card class="border-light rounded-0 font-weight-bold" header="CAR OWNER REGISTRATION" header-bg-variant="danger" header-text-variant="white">
-					<b-form @submit="onSubmit" @reset="onReset" v-if="show" class="p-4" autocomplete="off">
+					<b-form @submit.prevent="registerOwner" class="p-4" autocomplete="off">
 						
 						<b-row>
 							<b-col md="6">
 								<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-									<b-form-input class="rounded-0" size="lg" id="input-1" v-model="form.firstname" type="text" required></b-form-input>
+									<b-form-input class="rounded-0" size="lg" id="input-1" v-model="form.name" type="text" required></b-form-input>
 								</b-form-group>
 							</b-col>
 							<b-col md="6">
@@ -36,7 +36,7 @@
 							</b-col>
 							<b-col md="6">
 								<b-form-group id="input-group-4" label="Phone:" label-for="input-4">
-									<b-form-input class="rounded-0" size="lg" id="input-4" v-model="form.phone" type="phone" required></b-form-input>
+									<b-form-input class="rounded-0" size="lg" id="input-4" v-model="form.phone" type="text" required></b-form-input>
 								</b-form-group>
 							</b-col>
 						</b-row>
@@ -74,16 +74,17 @@
 </style>
 
 <script>
+	import axios from "axios";
+
 	export default {
 		data() {
 			return {
 				form: {
-					firstname: "",
+					name: "",
 					lastname: "",
 					email: "",
 					phone: "",
 				},
-				show: true,
 			};
 		},
 
@@ -95,22 +96,25 @@
 		},
 
 		methods: {
-			onSubmit(evt) {
-				evt.preventDefault();
-				alert(JSON.stringify(this.form));
-			},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.firstname = "";
-				this.form.lastname = "";
-				this.form.email = "";
-				this.form.phone = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
+			async registerOwner() {
+				await axios
+					.post("auth/register-owner", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Owner Registered Successfully",
+							type: "success",
+						});
+
+						this.$router.replace({
+							name: "Login",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+					});
 			},
 		},
 	};

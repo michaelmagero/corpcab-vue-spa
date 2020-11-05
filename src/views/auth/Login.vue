@@ -12,13 +12,13 @@
 		<b-row>
 			<b-col md="6" offset-md="3">
 				<b-card class="border-light rounded-0 font-weight-bold" header="DASHBOARD LOGIN" header-bg-variant="danger" header-text-variant="white">
-					<b-form @submit.prevent="submit" class="p-4" >
+					<b-form @submit.prevent="submit" class="p-4" autocomplete="off">
 						<b-form-group id="input-group-1" label="Email:" label-for="input-1">
-							<b-form-input class="rounded-0" size="lg" id="input-1" v-model="form.email" type="email" name="email" ></b-form-input>
+							<b-form-input class="rounded-0" size="lg" id="input-1" v-model="form.email" type="email" name="email" required></b-form-input>
 						</b-form-group>
 
 						<b-form-group id="input-group-2" label="Password:" label-for="input-2">
-							<b-form-input class="rounded-0" size="lg" id="input-2" v-model="form.password" type="password" name="password" ></b-form-input>
+							<b-form-input class="rounded-0" size="lg" id="input-2" v-model="form.password" type="password" name="password" required></b-form-input>
 						</b-form-group>
 
 						<b-form-group>
@@ -79,6 +79,11 @@
 
 			submit() {
 				this.SignIn(this.form).then(() => {
+					this.$toast.open({
+						message:
+							`<i class="fa fa-check-circle"></i>` + " " + "Login Successful",
+						type: "success",
+					});
 					this.$router.replace({
 						name: "Dashboard",
 					});

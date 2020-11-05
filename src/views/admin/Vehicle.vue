@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Vehicles</h1>
-				<b-button size="md" @click="info($event.target)" class="ml-3">
+				<b-button size="md" @click="createVehicle()" class="ml-3">
 					<b-icon icon="truck"></b-icon>  Create Vehicles
 				</b-button>
             </div>
@@ -65,7 +65,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateVehicle(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -97,9 +97,9 @@
 
 
 								<!-- Edit modal -->
-								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit="onSubmit" @reset="onReset" v-if="show">
+									<b-form @submit.prevent="editMode ? updateVehicle() : createOupdateVehicle()" v-if="show" autocomplete="off">
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-1" label="Vehicle:" label-for="input-1">
@@ -117,18 +117,27 @@
 												<b-col md="6">
 													<b-form-group id="input-group-3" label="Vehicle Owner:" label-for="input-3">
 
-														<select id="input-3" class="form-control">
-															<option disabled>Select Owner</option>
-															<option v-for="owner in owners" v-bind:value="owner.value">{{ owner.name }} {{ owner.lastname }}</option>
+														<select v-show="!editMode" class="form-control" name="owner">
+															<option v-for="owner in owners" v-bind:key="owner.value">{{ owner.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="owner">
+															<option v-show="editMode" v-for="owner in owners" v-bind:key="owner.value" selected>{{ owner.value }}</option>
+															<option v-show="!editMode" v-for="owner in owners" v-bind:key="owner.value">{{ owner.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
 
 												<b-col md="6">
 													<b-form-group id="input-group-4" label="Vehicle Driver:" label-for="input-4">
-														<select id="input-4" class="form-control">
-															<option disabled>Select Driver</option>
-															<option v-for="driver in drivers" v-bind:value="driver.value">{{ driver.name }} {{ driver.middlename }} {{ driver.lastname }}</option>
+
+														<select v-show="!editMode" class="form-control" name="driver">
+															<option v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="driver">
+															<option v-show="editMode" v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.value }}</option>
+															<option v-show="!editMode" v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
@@ -151,16 +160,28 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-7" label="YOM (Year of Manufacture):" label-for="input-7">
-														<select id="input-7" class="form-control">
-															<option v-for="year in years" v-bind:value="year.value">{{ year.text }}</option>
+														
+														<select v-show="!editMode" class="form-control" name="year">
+															<option v-for="year in years" v-bind:key="year.value">{{ year.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="year">
+															<option v-show="editMode" v-for="year in years" v-bind:key="year.value" selected>{{ year.value }}</option>
+															<option v-show="!editMode" v-for="year in years" v-bind:key="year.value">{{ year.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
 
 												<b-col md="6">
 													<b-form-group id="input-group-8" label="Color:" label-for="input-8">
-														<select id="input-8" class="form-control">
-															<option v-for="color in colors" v-bind:value="color.value">{{ color.text }}</option>
+
+														<select v-show="!editMode" class="form-control" name="color">
+															<option v-for="color in colors" v-bind:key="color.value">{{ color.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="color">
+															<option v-show="editMode" v-for="color in colors" v-bind:key="color.value" selected>{{ color.value }}</option>
+															<option v-show="!editMode" v-for="color in colors" v-bind:key="color.value">{{ color.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
@@ -169,16 +190,29 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-9" label="Fuel Type:" label-for="input-9">
-														<select id="input-9" class="form-control">
-															<option v-for="fuel in fuels" v-bind:value="fuel.value">{{ fuel.text }}</option>
+
+														<select v-show="!editMode" class="form-control" name="fuel">
+															<option v-for="fuel in fuels" v-bind:key="fuel.value">{{ fuel.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="fuel">
+															<option v-show="editMode" v-for="fuel in fuels" v-bind:key="fuel.value" selected>{{ fuel.value }}</option>
+															<option v-show="!editMode" v-for="fuel in fuels" v-bind:key="fuel.value">{{ fuel.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
 
 												<b-col md="6">
 													<b-form-group id="input-group-10" label="Status:" label-for="input-10">
-														<select id="input-10" class="form-control">
-															<option v-for="state in status" v-bind:value="state.value">{{ state.text }}</option>
+														
+
+														<select v-show="!editMode" class="form-control" name="status">
+															<option v-for="state in status" v-bind:key="state.value">{{ state.text }}</option>
+														</select>
+
+														<select  v-show="editMode" class="form-control" name="status">
+															<option v-show="editMode" v-for="state in status" v-bind:key="state.value" selected>{{ state.text }}</option>
+															<option v-show="!editMode" v-for="state in status" v-bind:key="state.value">{{ state.text }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
@@ -213,7 +247,8 @@
 
 											<b-row class="mt-5 ml-1">
 												<b-form-group>
-													<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+													<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
+													<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
 													<b-button type="reset" variant="danger">Reset</b-button>
 												</b-form-group>
 											</b-row>
@@ -280,6 +315,8 @@
 				},
 
 				//edit form data
+				editMode: false,
+				title: true,
 				show: true,
 				form: {
 					vehicle_image: "",
@@ -395,46 +432,33 @@
 				});
 		},
 		methods: {
-			onSubmit(evt) {
-				evt.preventDefault();
-				alert(JSON.stringify(this.form));
-			},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.vehicle_image = "";
-				this.form.registration_no = "";
-				this.form.owner_id = "";
-				this.form.driver_id = "";
-				this.form.make = "";
-				this.form.model = "";
-				this.form.yom = "";
-				this.form.color = "";
-				this.form.fuel_type = "";
-				this.form.status = "";
-				this.form.logobook = "";
-				this.form.insurance_sticker = "";
-				this.form.uber_inspection = "";
-				this.form.ntsa_inspection = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
-			},
-			info(item, index, button) {
-				this.infoModal.title = "Edit";
-				this.infoModal.content = JSON.stringify(item, null, 2);
-				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
-			},
-			resetInfoModal() {
-				this.infoModal.title = "";
-				this.infoModal.content = "";
-			},
+			//tables methods
 			onFiltered(filteredItems) {
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
 				this.currentPage = 1;
+			},
+
+			filteredList() {
+				return this.users.filter(
+					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
+				);
+			},
+
+			//form/modal methods
+
+			createVehicle(item, index, button) {
+				this.editMode = false;
+				this.infoModal.content = item;
+				this.infoModal.title = "Create Vehicle";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			updateVehicle(item, index, button) {
+				this.editMode = true;
+				this.infoModal.content = item;
+				this.infoModal.title = "Edit Vehicle";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 		},
 	};

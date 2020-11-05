@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Expenditures</h1>
-				<b-button size="md" @click="info($event.target)" class="ml-3">
+				<b-button size="md" @click="createExpenditure()" class="ml-3">
 					<b-icon icon="wallet-fill"></b-icon>  Create Expenditure
 				</b-button>
             </div>
@@ -59,7 +59,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="info(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateExpenditure(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -89,9 +89,9 @@
 								</b-row>
 
 								<!-- Edit modal -->
-								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit="onSubmit" @reset="onReset" v-if="show">
+									<b-form @submit.prevent="editMode ? updateExpenditure() : createOupdateExpenditure()" v-if="show" autocomplete="off">
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-1" label="Paid To:" label-for="input-1">
@@ -122,7 +122,8 @@
 
 											<b-row class="mt-4 ml-1">
 												<b-form-group>
-													<b-button type="submit" variant="primary">Submit</b-button>&nbsp;
+													<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
+													<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
 													<b-button type="reset" variant="danger">Reset</b-button>
 												</b-form-group>
 											</b-row>
@@ -188,6 +189,8 @@
 				},
 
 				//edit form data
+				editMode: false,
+				title: true,
 				show: true,
 				form: {
 					paid_to: "",
@@ -231,36 +234,33 @@
 				});
 		},
 		methods: {
-			onSubmit(evt) {
-				evt.preventDefault();
-				alert(JSON.stringify(this.form));
-			},
-			onReset(evt) {
-				evt.preventDefault();
-				// Reset our form values
-				this.form.paid_to = "";
-				this.form.expenditure = "";
-				this.form.amount = "";
-				this.form.receipts = "";
-				// Trick to reset/clear native browser form validation state
-				this.show = false;
-				this.$nextTick(() => {
-					this.show = true;
-				});
-			},
-			info(item, index, button) {
-				this.infoModal.title = "Edit";
-				this.infoModal.content = JSON.stringify(item, null, 2);
-				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
-			},
-			resetInfoModal() {
-				this.infoModal.title = "";
-				this.infoModal.content = "";
-			},
+			//tables methods
 			onFiltered(filteredItems) {
 				// Trigger pagination to update the number of buttons/pages due to filtering
 				this.totalRows = filteredItems.length;
 				this.currentPage = 1;
+			},
+
+			filteredList() {
+				return this.users.filter(
+					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
+				);
+			},
+
+			//form/modal methods
+
+			createExpenditure(item, index, button) {
+				this.editMode = false;
+				this.infoModal.content = item;
+				this.infoModal.title = "Create Expenditure";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			updateExpenditure(item, index, button) {
+				this.editMode = true;
+				this.infoModal.content = item;
+				this.infoModal.title = "Edit Expenditure";
+				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 		},
 	};
