@@ -95,13 +95,13 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-1" label="Paid To:" label-for="input-1">
-														<b-form-input id="input-1" v-model="form.paid_to" class="form-control" type="text" required></b-form-input>
+														<b-form-input id="input-1" v-model="infoModal.content.paid_to" name="paid_to" class="form-control" type="text" required></b-form-input>
 													</b-form-group>
 												</b-col>
 
 												<b-col md="6">
 													<b-form-group id="input-group-2" label="Expenditure:" label-for="input-2">
-														<b-form-input id="input-2" v-model="form.expenditure" class="form-control" type="text" required></b-form-input>
+														<b-form-input id="input-2" v-model="infoModal.content.expenditure" name="expenditure" class="form-control" type="text" required></b-form-input>
 													</b-form-group>
 												</b-col>
 											</b-row>
@@ -109,21 +109,21 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-3" label="Amount:" label-for="input-3">
-														<b-form-input id="input-3" v-model="form.amount" class="form-control" type="text" required></b-form-input>
+														<b-form-input id="input-3" v-model="infoModal.content.amount" name="amount" class="form-control" type="text" required></b-form-input>
 													</b-form-group>
 												</b-col>
 
 												<b-col md="6">
 													<b-form-group id="input-group-4" label="Receipts:" label-for="input-4">
-														<b-file id="input-4" v-model="form.receipts" type="file" class="form-control"></b-file>
+														<b-file id="input-4" v-model="infoModal.content.receipts" name="receipts" type="file" class="form-control"></b-file>
 													</b-form-group>
 												</b-col>
 											</b-row>
 
 											<b-row class="mt-4 ml-1">
 												<b-form-group>
-													<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-													<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+													<b-button v-show="editMode" type="submit" variant="success">Update Expenditure</b-button>&nbsp;
+													<b-button v-show="!editMode" type="submit" variant="primary">Create Expenditure</b-button>&nbsp;
 													<b-button type="reset" variant="danger">Reset</b-button>
 												</b-form-group>
 											</b-row>

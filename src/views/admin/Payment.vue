@@ -42,28 +42,28 @@
 										{{ row.item.name + " " + row.item.lastname }}
 
 										<b-row class="ml-5 mb-n">
-											<b-col md="6">
+											<b-col md="3">
 												<span class="text-muted">Total</span>
 											</b-col>
-											<b-col md="6"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
+											<b-col md="3"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
 										</b-row>
 										<b-row class="ml-5 mb-n">
-											<b-col md="6">
+											<b-col md="3">
 												<span class="text-muted">Today</span>
 											</b-col>
-											<b-col md="6"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
+											<b-col md="3"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
 										</b-row>
 										<b-row class="ml-5 mb-n">
-											<b-col md="6">
+											<b-col md="3">
 												<span class="text-muted"> This Week </span>
 											</b-col>
-											<b-col md="6"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
+											<b-col md="3"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
 										</b-row>
 										<b-row class="ml-5 mb-n">
-											<b-col md="6">
+											<b-col md="3">
 												<span class="text-muted"> This Month </span>
 											</b-col>
-											<b-col md="6"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
+											<b-col md="3"><span class="font-weight-bolder"> Ksh 5000 </span></b-col>
 										</b-row>
 									</template>
 

@@ -103,12 +103,12 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-1" label="Vehicle:" label-for="input-1">
-														<b-file id="input-1" type="file" v-model="form.vehicle_image" class="form-control"></b-file>
+														<b-file id="input-1" type="file" v-model="infoModal.content.vehicle_image" class="form-control"></b-file>
 													</b-form-group>
 												</b-col>
 												<b-col md="6">
 													<b-form-group id="input-group-2" label="Registration No:" label-for="input-2">
-														<b-form-input id="input-2" v-model="form.registration_no" class="form-control" type="text" required></b-form-input>
+														<b-form-input id="input-2" v-model="infoModal.content.registration_no" class="form-control" type="text" required></b-form-input>
 													</b-form-group>
 												</b-col>
 											</b-row>
@@ -118,12 +118,12 @@
 													<b-form-group id="input-group-3" label="Vehicle Owner:" label-for="input-3">
 
 														<select v-show="!editMode" class="form-control" name="owner">
-															<option v-for="owner in owners" v-bind:key="owner.value">{{ owner.text }}</option>
+															<option v-for="owner in owners" v-bind:key="owner.value">{{ owner.name }}</option>
 														</select>
 
 														<select  v-show="editMode" class="form-control" name="owner">
-															<option v-show="editMode" v-for="owner in owners" v-bind:key="owner.value" selected>{{ owner.value }}</option>
-															<option v-show="!editMode" v-for="owner in owners" v-bind:key="owner.value">{{ owner.text }}</option>
+															<option v-show="editMode" v-for="owner in owners" v-bind:key="owner.value" selected>{{ owner.name }}</option>
+															<option v-show="!editMode" v-for="owner in owners" v-bind:key="owner.value">{{ owner.name }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
@@ -132,12 +132,12 @@
 													<b-form-group id="input-group-4" label="Vehicle Driver:" label-for="input-4">
 
 														<select v-show="!editMode" class="form-control" name="driver">
-															<option v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
+															<option v-for="driver in drivers" v-bind:key="driver.value">{{ driver.name }}</option>
 														</select>
 
 														<select  v-show="editMode" class="form-control" name="driver">
-															<option v-show="editMode" v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.value }}</option>
-															<option v-show="!editMode" v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
+															<option v-show="editMode" v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.name }}</option>
+															<option v-show="!editMode" v-for="driver in drivers" v-bind:key="driver.value">{{ driver.name }}</option>
 														</select>
 													</b-form-group>
 												</b-col>
@@ -147,12 +147,12 @@
 											<b-row>
 												<b-col md="6">
 													<b-form-group id="input-group-5" label="Make:" label-for="input-5">
-														<b-form-input id="input-5" v-model="form.make" class="form-control" type="text" required></b-form-input>
+														<b-form-input id="input-5" v-model="infoModal.content.make" class="form-control" type="text" required></b-form-input>
 													</b-form-group>
 												</b-col>
 												<b-col md="6">
 													<b-form-group id="input-group-6" label="Model:" label-for="input-6">
-														<b-form-input id="input-6" v-model="form.model" class="form-control" type="email" required></b-form-input>
+														<b-form-input id="input-6" v-model="infoModal.content.model" class="form-control" type="email" required></b-form-input>
 													</b-form-group>
 												</b-col>
 											</b-row>
@@ -247,8 +247,8 @@
 
 											<b-row class="mt-5 ml-1">
 												<b-form-group>
-													<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-													<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+													<b-button v-show="editMode" type="submit" variant="success">Update Vehicle</b-button>&nbsp;
+													<b-button v-show="!editMode" type="submit" variant="primary">Create Vehicle</b-button>&nbsp;
 													<b-button type="reset" variant="danger">Reset</b-button>
 												</b-form-group>
 											</b-row>
@@ -403,7 +403,7 @@
 				.get("/v1/vehicles")
 				.then((res) => {
 					this.vehicles = res.data.data;
-					//console.log(res);
+					console.log(res);
 				})
 				.catch((err) => {
 					console.error(err);
@@ -414,7 +414,7 @@
 				.get("/v1/owners")
 				.then((result) => {
 					this.owners = result.data.data;
-					//console.log(result);
+					console.log(result);
 				})
 				.catch((err) => {
 					console.error(err);
@@ -425,7 +425,7 @@
 				.get("/v1/drivers")
 				.then((results) => {
 					this.drivers = results.data.data;
-					//console.log(results);
+					console.log(results);
 				})
 				.catch((err) => {
 					console.error(err);

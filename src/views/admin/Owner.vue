@@ -88,7 +88,6 @@
 
 								<!-- Edit modal -->
 								<b-modal :id="infoModal.id" :title="infoModal.title" hide-footer>
-									<!-- <pre>{{ infoModal.content }}</pre> -->
 									<b-form @submit.prevent="editMode ? updateOwner() : createOupdateOwner()" v-if="show" autocomplete="off">
 										<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
 											<b-form-input id="input-1" v-model="infoModal.content.name" name="name" class="form-control" type="text" required></b-form-input>
@@ -111,8 +110,8 @@
 										</b-form-group>
 
 										<b-form-group>
-											<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-											<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+											<b-button v-show="editMode" type="submit" variant="success">Update Owner</b-button>&nbsp;
+											<b-button v-show="!editMode" type="submit" variant="primary">Create Owner</b-button>&nbsp;
 											<b-button type="reset" variant="danger">Reset</b-button>
 										</b-form-group>
 									</b-form>

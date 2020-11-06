@@ -100,19 +100,19 @@
 												<b-form-group id="input-group-1" label="Vehicle:" label-for="input-1">
 
 													<select v-show="!editMode" class="form-control" name="registration_no">
-														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.id">{{ vehicle.registration_no }}</option>
 													</select>
 
 													<select  v-show="editMode" class="form-control" name="registration_no">
-														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.value }}</option>
-														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.id" selected>{{ vehicle.registration_no }}</option>
+														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.id">{{ vehicle.registration_no }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Expense:" label-for="input-2">
-													<b-form-input id="input-2" v-model="form.expense" class="form-control" type="text" required></b-form-input>
+													<b-form-input id="input-2" v-model="infoModal.content.expense" class="form-control" type="text" required></b-form-input>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -120,21 +120,21 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Amount:" label-for="input-3">
-													<b-form-input id="input-3" v-model="form.amount" class="form-control" type="text" required></b-form-input>
+													<b-form-input id="input-3" v-model="infoModal.content.amount" class="form-control" type="text" required></b-form-input>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Receipts:" label-for="input-4">
-													<b-file id="input-4" v-model="form.receipts" type="file" class="form-control"></b-file>
+													<b-file id="input-4" v-model="infoModal.content.receipts" type="file" class="form-control"></b-file>
 												</b-form-group>
 											</b-col>
 										</b-row>
 
 										<b-row class="mt-5 ml-1">
 											<b-form-group>
-												<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-												<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+												<b-button v-show="editMode" type="submit" variant="success">Update Expense</b-button>&nbsp;
+												<b-button v-show="!editMode" type="submit" variant="primary">Create Expense</b-button>&nbsp;
 												<b-button type="reset" variant="danger">Reset</b-button>
 											</b-form-group>
 										</b-row>

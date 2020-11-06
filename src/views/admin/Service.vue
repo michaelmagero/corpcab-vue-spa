@@ -104,19 +104,19 @@
 												<b-form-group id="input-group-1" label="Vehicle Registration:" label-for="input-1">
 
 													<select v-show="!editMode" class="form-control" name="registration_no">
-														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.registration_no }}</option>
 													</select>
 
 													<select  v-show="editMode" class="form-control" name="registration_no">
-														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.value }}</option>
-														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
+														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.registration_no }}</option>
+														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.registration_no }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Service Date:" label-for="input-2">
-													<b-form-datepicker id="datepicker-sm" v-model="form.service_date" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker id="datepicker-sm" v-model="infoModal.content.service_date" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -124,12 +124,12 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Current Odometer Reading:" label-for="input-3">
-													<b-form-input id="input-3" v-model="form.current_odometer_reading" class="form-control" type="email" required></b-form-input>
+													<b-form-input id="input-3" v-model="infoModal.content.current_odometer_reading" class="form-control" type="email" required></b-form-input>
 												</b-form-group>
 											</b-col>
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Kilometres Serviced:" label-for="input-4">
-													<b-form-input id="input-4" v-model="form.kms_serviced" class="form-control" type="email" required></b-form-input>
+													<b-form-input id="input-4" v-model="infoModal.content.kms_serviced" class="form-control" type="email" required></b-form-input>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -137,7 +137,7 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-5" label="Next Service (KMS):" label-for="input-5">
-													<b-form-input id="input-5" v-model="form.next_kms_service" class="form-control" type="email" required></b-form-input>
+													<b-form-input id="input-5" v-model="infoModal.content.next_kms_service" class="form-control" type="email" required></b-form-input>
 												</b-form-group>
 											</b-col>
 											<b-col md="6">
@@ -157,8 +157,8 @@
 
 										<b-row class="mt-4 ml-1">
 											<b-form-group>
-												<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-												<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+												<b-button v-show="editMode" type="submit" variant="success">Update Service</b-button>&nbsp;
+												<b-button v-show="!editMode" type="submit" variant="primary">Create Service</b-button>&nbsp;
 												<b-button type="reset" variant="danger">Reset</b-button>
 											</b-form-group>
 										</b-row>

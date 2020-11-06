@@ -129,13 +129,13 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Issue Date:" label-for="input-3">
-													<b-form-datepicker id="datepicker-sm" v-model="form.issue_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker id="datepicker-sm" v-model="infoModal.content.issue_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Expiry Date:" label-for="input-4">
-													<b-form-datepicker id="datepicker-sm-1" v-model="form.expiry_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker id="datepicker-sm-1" v-model="infoModal.content.expiry_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -143,15 +143,15 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-5" label="Reminder Date:" label-for="input-5">
-													<b-form-datepicker id="datepicker-sm-2" v-model="form.reminder_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker id="datepicker-sm-2" v-model="infoModal.content.reminder_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
 
 										<b-row class="mt-5 ml-1">
 											<b-form-group>
-												<b-button v-show="editMode" type="submit" variant="success">Update Driver</b-button>&nbsp;
-												<b-button v-show="!editMode" type="submit" variant="primary">Create Driver</b-button>&nbsp;
+												<b-button v-show="editMode" type="submit" variant="success">Update Document</b-button>&nbsp;
+												<b-button v-show="!editMode" type="submit" variant="primary">Create Document</b-button>&nbsp;
 												<b-button type="reset" variant="danger">Reset</b-button>
 											</b-form-group>
 										</b-row>
