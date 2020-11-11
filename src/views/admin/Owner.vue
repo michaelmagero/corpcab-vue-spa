@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Owner</h1>
-				<b-button size="md" @click="createOwner()" class="ml-3">
+				<b-button size="md" @click="createModal()" class="ml-3">
 					<b-icon icon="people-fill"></b-icon>  Create Owner
 				</b-button>
             </div>
@@ -55,7 +55,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateOwner(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -88,25 +88,30 @@
 
 								<!-- Edit modal -->
 								<b-modal :id="infoModal.id" :title="infoModal.title" hide-footer>
-									<b-form @submit.prevent="editMode ? updateOwner() : createOupdateOwner()" v-if="show" autocomplete="off">
+									<b-form @submit.prevent="editMode ? updateOwner() : createOwner()" v-if="show" autocomplete="off">
 										<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-											<b-form-input id="input-1" v-model="infoModal.content.name" name="name" class="form-control" type="text" required></b-form-input>
+											<b-form-input v-show="editMode" v-model="infoModal.content.name" name="name" class="form-control" type="text"></b-form-input>
+											<b-form-input v-show="!editMode" v-model="form.name" name="name" class="form-control" type="text"></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-											<b-form-input id="input-2" v-model="infoModal.content.lastname" name="lastname" class="form-control" type="text" required></b-form-input>
+											<b-form-input v-show="editMode" v-model="infoModal.content.lastname" name="lastname" class="form-control" type="text"></b-form-input>
+											<b-form-input v-show="!editMode" v-model="form.lastname" name="lastname" class="form-control" type="text"></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-											<b-form-input id="input-3" v-model="infoModal.content.email" name="email" class="form-control" type="email" required></b-form-input>
+											<b-form-input v-show="editMode" v-model="infoModal.content.email" name="email" class="form-control" type="email"></b-form-input>
+											<b-form-input v-show="!editMode" v-model="form.email" name="email" class="form-control" type="email"></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-4" label="Phone:" label-for="input-4">
-											<b-form-input id="input-4" v-model="infoModal.content.phone" name="phone" class="form-control" type="text" required></b-form-input>
+											<b-form-input v-show="editMode" v-model="infoModal.content.phone" name="phone" class="form-control" type="text"></b-form-input>
+											<b-form-input v-show="!editMode" v-model="form.phone" name="phone" class="form-control" type="text"></b-form-input>
 										</b-form-group>
 
 										<b-form-group id="input-group-5" label="Password:" label-for="input-5">
-											<b-form-input id="input-5" v-model="infoModal.content.password" name="password" class="form-control" type="password" required></b-form-input>
+											<b-form-input v-show="editMode" v-model="infoModal.content.password" name="password" class="form-control" type="password"></b-form-input>
+											<b-form-input v-show="!editMode" v-model="form.password" name="password" class="form-control" type="password"></b-form-input>
 										</b-form-group>
 
 										<b-form-group>
@@ -161,9 +166,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -232,18 +237,76 @@
 
 			//form/modal methods
 
-			createOwner(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.content = item;
 				this.infoModal.title = "Create Owner";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateOwner(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
 				this.infoModal.content = item;
 				this.infoModal.title = "Edit Owner";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createOwner() {
+				await axios
+					.post("/v1/owners", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Owner Registered Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Owner",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failed",
+							type: "erro",
+						});
+					});
+			},
+
+			async updateOwner() {
+				await axios
+					.put("/v1/users/" + this.infoModal.content.id, this.infoModal.content)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Owner",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "error",
+						});
+					});
 			},
 		},
 	};

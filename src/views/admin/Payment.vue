@@ -145,9 +145,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {

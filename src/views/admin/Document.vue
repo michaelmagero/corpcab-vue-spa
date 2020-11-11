@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Documents</h1>
-				<b-button size="md" @click="createDocument()" class="ml-3">
+				<b-button size="md" @click="createModal()" class="ml-3">
 					<b-icon icon="folder"></b-icon>  Create Document
 				</b-button>
             </div>
@@ -60,7 +60,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateDocument(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -92,18 +92,18 @@
 								<!-- Edit modal -->
 								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit.prevent="editMode ? updateDocument() : createOupdateDocument()" v-if="show" autocomplete="off">
+									<b-form @submit.prevent="editMode ? updateDocument() : createDocument()" v-if="show" autocomplete="off">
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-1" label="Document Type:" label-for="input-1">
 
-													<select v-show="!editMode" class="form-control" name="document_type">
+													<select v-show="!editMode" class="form-control" name="document_type" v-model="form.document_type">
 														<option v-for="doc in docs" v-bind:key="doc.value">{{ doc.text }}</option>
 													</select>
 
-													<select  v-show="editMode" class="form-control" name="document_type">
-														<option v-show="editMode" v-for="doc in docs" v-bind:key="doc.value" selected>{{ doc.value }}</option>
-														<option v-show="!editMode" v-for="doc in docs" v-bind:key="doc.value">{{ doc.text }}</option>
+													<select  v-show="editMode" class="form-control" name="document_type" v-model="infoModal.content.document_type">
+														<option v-for="doc in docs" v-bind:key="doc.value" selected>{{ doc.value }}</option>
+														<option v-for="doc in docs" v-bind:key="doc.value">{{ doc.text }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
@@ -111,16 +111,14 @@
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Document Owner:" label-for="input-2">
 
-													<select v-show="!editMode" class="form-control" name="document_owner">
+													<select v-show="!editMode" class="form-control" name="document_owner" v-model="form.document_owner">
 														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
 														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
 													</select>
 
-													<select  v-show="editMode" class="form-control" name="document_owner">
-														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.value }}</option>
-														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.text }}</option>
-														<option v-show="editMode" v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.value }}</option>
-														<option v-show="!editMode" v-for="driver in drivers" v-bind:key="driver.value">{{ driver.text }}</option>
+													<select  v-show="editMode" class="form-control" name="document_owner" v-model="infoModal.content.document_owner">
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.value }}</option>
+														<option v-for="driver in drivers" v-bind:key="driver.value" selected>{{ driver.value }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
@@ -129,13 +127,15 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Issue Date:" label-for="input-3">
-													<b-form-datepicker id="datepicker-sm" v-model="infoModal.content.issue_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="editMode" name="issue_date" id="datepicker-sm" v-model="infoModal.content.issue_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="!editMode" name="issue_date" id="datepicker-sm" v-model="form.issue_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Expiry Date:" label-for="input-4">
-													<b-form-datepicker id="datepicker-sm-1" v-model="infoModal.content.expiry_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="editMode" name="expiry_date" id="datepicker-sm-1" v-model="infoModal.content.expiry_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="!editMode" name="expiry_date" id="datepicker-sm-1" v-model="form.expiry_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -143,7 +143,8 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-5" label="Reminder Date:" label-for="input-5">
-													<b-form-datepicker id="datepicker-sm-2" v-model="infoModal.content.reminder_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="editMode" name="reminder_date" id="datepicker-sm-2" v-model="infoModal.content.reminder_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="!editMode" name="reminder_date" id="datepicker-sm-2" v-model="form.reminder_date" size="sm" local="en" class="form-control mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -209,9 +210,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -313,18 +314,79 @@
 
 			//form/modal methods
 
-			createDocument(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.content = item;
 				this.infoModal.title = "Create Document";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateDocument(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
 				this.infoModal.content = item;
 				this.infoModal.title = "Edit Document";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createDocument() {
+				await axios
+					.post("/v1/documents", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Staff Registered Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failed",
+							type: "erro",
+						});
+					});
+			},
+
+			async updateDocument() {
+				await axios
+					.put(
+						"/v1/documents/" + this.infoModal.content.id,
+						this.infoModal.content
+					)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "erro",
+						});
+					});
 			},
 		},
 	};

@@ -5,7 +5,7 @@
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Drivers</h1>
-                <b-button size="md" @click="createDriver()" class="ml-3">
+                <b-button size="md" @click="createModal()" class="ml-3">
                     <b-icon icon="people-fill"></b-icon>  Create Driver
                 </b-button>
             </div>
@@ -57,7 +57,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateDriver(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -95,12 +95,14 @@
                                         <b-row>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-                                                    <b-form-input id="input-1" v-model="infoModal.content.name" name="name" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.name" name="name" class="form-control" type="text"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.name" name="name" class="form-control" type="text"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-2" label="Middlename:" label-for="input-2">
-                                                    <b-form-input id="input-2" v-model="infoModal.content.middlename" name="middlename" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.middlename" name="middlename" class="form-control" type="text"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.middlename" name="middlename" class="form-control" type="text"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -108,12 +110,14 @@
                                         <b-row>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-3" label="Lastname:" label-for="input-3">
-                                                    <b-form-input id="input-3" v-model="infoModal.content.lastname" name="lastname" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.lastname" name="lastname" class="form-control" type="text"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.lastname" name="lastname" class="form-control" type="text"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-4" label="Profile Photo:" label-for="input-4">
-                                                    <b-file id="input-4" type="file" v-model="infoModal.content.profile_picture" name="profile_picture" class="form-control"></b-file>
+                                                    <b-file v-show="editMode" type="file" v-model="infoModal.content.profile_picture" name="profile_picture" class="form-control"></b-file>
+                                                    <b-file v-show="!editMode" type="file" v-model="form.profile_picture" name="profile_picture" class="form-control"></b-file>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -122,12 +126,14 @@
                                         <b-row>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-5" label="National ID:" label-for="input-5">
-                                                    <b-form-input id="input-5" v-model="infoModal.content.national_id" name="national_id" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.national_id" name="national_id" class="form-control" type="text"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.national_id" name="national_id" class="form-control" type="text"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-6" label="Phone:" label-for="input-6">
-                                                    <b-form-input id="input-6" v-model="infoModal.content.phone" name="phone" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.phone" name="phone" class="form-control" type="text"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.phone" name="phone" class="form-control" type="text"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -136,12 +142,14 @@
                                         <b-row>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-7" label="Email:" label-for="input-7">
-                                                    <b-form-input id="input-7" v-model="infoModal.content.email" name="email" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.email" name="email" class="form-control" type="email"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.email" name="email" class="form-control" type="email"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-8" label="Password:" label-for="input-8">
-                                                    <b-form-input id="input-8" v-model="infoModal.content.password" name="password" class="form-control" type="text" required></b-form-input>
+                                                    <b-form-input v-show="editMode" v-model="infoModal.content.password" name="password" class="form-control" type="password"></b-form-input>
+                                                    <b-form-input v-show="!editMode" v-model="form.password" name="password" class="form-control" type="password"></b-form-input>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -155,14 +163,16 @@
                                                     </select>
 
                                                     <select  v-show="editMode" class="form-control" name="status">
-                                                        <option v-show="editMode" v-for="state in status" v-bind:key="state.value" selected>{{ state.text }}</option>
-                                                        <option v-show="!editMode" v-for="state in status" v-bind:key="state.value">{{ state.text }}</option>
+                                                        <option v-for="state in status" v-bind:key="state.value" selected>{{ state.text }}</option>
                                                     </select>
+
                                                 </b-form-group>
                                             </b-col>
+
                                             <b-col md="6">
                                                 <b-form-group id="input-group-10" label="Driver License:" label-for="input-10">
-                                                    <b-file id="input-10" type="file" v-model="infoModal.content.driver_license" name="driver_license" class="form-control"></b-file>
+                                                    <b-file v-show="editMode" type="file" v-model="infoModal.content.driver_license" name="driver_license" class="form-control"></b-file>
+                                                    <b-file v-show="!editMode" type="file" v-model="form.driver_license" name="driver_license" class="form-control"></b-file>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -171,13 +181,15 @@
                                         <b-row>
                                             <b-col md="6">
                                                 <b-form-group id="input-group-11" label="Good Conduct Cert:" label-for="input-11">
-                                                    <b-file id="input-11" type="file" v-model="infoModal.content.good_conduct_cert" name="good_conduct_cert" class="form-control"></b-file>
+                                                    <b-file v-show="editMode" type="file" v-model="infoModal.content.good_conduct_cert" name="good_conduct_cert" class="form-control"></b-file>
+                                                    <b-file v-show="!editMode" type="file" v-model="form.good_conduct_cert" name="good_conduct_cert" class="form-control"></b-file>
                                                 </b-form-group>
                                             </b-col>
 
                                             <b-col md="6">
                                                 <b-form-group id="input-group-12" label="PSV:" label-for="input-12">
-                                                    <b-file id="input-12" type="file" v-model="infoModal.content.psv" name="psv" class="form-control"></b-file>
+                                                    <b-file v-show="editMode" type="file" v-model="infoModal.content.psv" name="psv" class="form-control"></b-file>
+                                                    <b-file v-show="!editMode" type="file" v-model="form.psv" name="psv" class="form-control"></b-file>
                                                 </b-form-group>
                                             </b-col>
                                         </b-row>
@@ -240,9 +252,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -329,18 +341,76 @@
 
 			//form/modal methods
 
-			createDriver(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.content = item;
 				this.infoModal.title = "Create Driver";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateDriver(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
 				this.infoModal.content = item;
 				this.infoModal.title = "Edit Driver";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createStaff() {
+				await axios
+					.post("/v1/drivers", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Driver Registered Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Driver",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failed",
+							type: "erro",
+						});
+					});
+			},
+
+			async updateStaff() {
+				await axios
+					.put("/v1/drivers/" + this.infoModal.content.id, this.infoModal.content)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Driver",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "erro",
+						});
+					});
 			},
 		},
 	};

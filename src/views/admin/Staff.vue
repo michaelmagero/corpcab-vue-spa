@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-3 border-bottom">
                 <h1 class="h2">Staff</h1>
-				<b-button size="md" @click="createStaff()" class="ml-3">
+				<b-button size="md" @click="createModal()" class="ml-3">
 					<b-icon icon="people-fill"></b-icon>  Create Staff
 				</b-button>
             </div>
@@ -59,7 +59,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateStaff(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -91,37 +91,39 @@
 								<!-- Edit modal -->
 									<div>
 										<b-modal :id="infoModal.id" :title="infoModal.title" hide-footer>
-		
-												<b-form @submit.prevent="editMode ? updateStaff() : createStaff()" v-if="show" autocomplete="off">
-													<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
-														<b-form-input id="input-1" name="name" v-model="infoModal.content.name" class="form-control" type="text" required></b-form-input>
-													</b-form-group>
+											<b-form @submit.prevent="editMode ? updateStaff() : createStaff()" v-if="show" autocomplete="off">
+												<b-form-group id="input-group-1" label="Firstname:" label-for="input-1">
+													<b-form-input v-show="editMode" name="name" v-model="infoModal.content.name" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" name="name" v-model="form.name" class="form-control" type="text"></b-form-input>
+												</b-form-group>
 
-													<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
-														<b-form-input id="input-2" name="lastname"  v-model="infoModal.content.lastname" class="form-control" type="text" required></b-form-input>
-													</b-form-group>
+												<b-form-group id="input-group-2" label="Lastname:" label-for="input-2">
+													<b-form-input v-show="editMode" name="lastname"  v-model="infoModal.content.lastname" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" name="lastname"  v-model="form.lastname" class="form-control" type="text"></b-form-input>
+												</b-form-group>
 
-													<b-form-group id="input-group-3" label="Email:" label-for="input-3">
-														<b-form-input id="input-3" name="email"  v-model="infoModal.content.email" class="form-control" type="email" required></b-form-input>
-													</b-form-group>
+												<b-form-group id="input-group-3" label="Email:" label-for="input-3">
+													<b-form-input v-show="editMode" name="email"  v-model="infoModal.content.email" class="form-control" type="email"></b-form-input>
+													<b-form-input v-show="!editMode" name="email"  v-model="form.email" class="form-control" type="email"></b-form-input>
+												</b-form-group>
 
-													<b-form-group id="input-group-5" label="Role:" label-for="input-5">
-														<select v-show="!editMode" class="form-control" name="role">
-															<option v-for="role in roles" v-bind:key="role.value">{{ role.text }}</option>
-														</select>
+												<b-form-group id="input-group-5" label="Role:" label-for="input-5">
+													<select v-show="editMode" class="form-control" name="role" v-model="infoModal.content.role">
+														<option selected>{{ infoModal.content.role }}</option>
+														<option v-for="role in roles" v-bind:key="role.value">{{ role.value }}</option>
+													</select>
 
-														<select  v-show="editMode" class="form-control" name="role">
-															<option v-show="editMode" v-for="role in roles" v-bind:key="role.value" selected>{{ role.value }}</option>
-															<option v-show="!editMode" v-for="role in roles" v-bind:key="role.value">{{ role.text }}</option>
-														</select>
-													</b-form-group>
+													<select v-show="!editMode" class="form-control" name="role" v-model="form.role">
+														<option v-for="role in roles" v-bind:key="role.value">{{ role.value }}</option>
+													</select>
+												</b-form-group>	
 
-													<b-form-group class="mt-5">
-														<b-button v-show="editMode" type="submit" variant="success">Update Staff</b-button>&nbsp;
-														<b-button v-show="!editMode" type="submit" variant="primary">Create Staff</b-button>&nbsp;
-														<b-button type="reset" variant="danger">Reset</b-button>
-													</b-form-group>
-												</b-form>
+												<b-form-group class="mt-5">
+													<b-button v-show="!editMode" type="submit" variant="primary">Create Staff</b-button>&nbsp;
+													<b-button v-show="editMode" type="submit" variant="success">Update Staff</b-button>&nbsp;
+													<b-button type="reset" variant="danger">Reset</b-button>
+												</b-form-group>
+											</b-form>
 										</b-modal>
 									</div>
 									
@@ -173,9 +175,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -189,6 +191,7 @@
 				title: true,
 				show: true,
 				form: {
+					id: "",
 					name: "",
 					lastname: "",
 					email: "",
@@ -254,18 +257,75 @@
 
 			//form/modal methods
 
-			createDriver(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
-				this.infoModal.content = item;
 				this.infoModal.title = "Create Staff";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateDriver(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
-				this.infoModal.content = item;
 				this.infoModal.title = "Edit Staff";
+				this.infoModal.content = item;
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createStaff() {
+				await axios
+					.post("/v1/users", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Staff Registered Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failed",
+							type: "erro",
+						});
+					});
+			},
+
+			async updateStaff() {
+				await axios
+					.put("/v1/users/" + this.infoModal.content.id, this.infoModal.content)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "erro",
+						});
+					});
 			},
 		},
 	};

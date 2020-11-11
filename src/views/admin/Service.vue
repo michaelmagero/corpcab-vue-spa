@@ -6,7 +6,7 @@
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Service</h1>
 
-				<b-button size="md" @click="createService()" class="ml-3">
+				<b-button size="md" @click="createModal()" class="ml-3">
 					<b-icon icon="wrench"></b-icon>  Create Service
 				</b-button>
             </div>
@@ -66,7 +66,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateService(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -103,20 +103,21 @@
 											<b-col md="6">
 												<b-form-group id="input-group-1" label="Vehicle Registration:" label-for="input-1">
 
-													<select v-show="!editMode" class="form-control" name="registration_no">
+													<select v-show="!editMode" class="form-control" name="registration_no" v-model="form.registration_no">
 														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.registration_no }}</option>
 													</select>
 
-													<select  v-show="editMode" class="form-control" name="registration_no">
-														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.registration_no }}</option>
-														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.registration_no }}</option>
+													<select  v-show="editMode" class="form-control" name="registration_no" v-model="infoModal.content.registration_no">
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value" selected>{{ vehicle.registration_no }}</option>
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.value">{{ vehicle.registration_no }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Service Date:" label-for="input-2">
-													<b-form-datepicker id="datepicker-sm" v-model="infoModal.content.service_date" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="editMode" id="datepicker-sm" v-model="infoModal.content.service_date" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="!editMode" id="datepicker-sm" v-model="form.service_date" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -124,12 +125,14 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Current Odometer Reading:" label-for="input-3">
-													<b-form-input id="input-3" v-model="infoModal.content.current_odometer_reading" class="form-control" type="email" required></b-form-input>
+													<b-form-input v-show="editMode" v-model="infoModal.content.current_odometer_reading" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" v-model="form.current_odometer_reading" class="form-control" type="text"></b-form-input>
 												</b-form-group>
 											</b-col>
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Kilometres Serviced:" label-for="input-4">
-													<b-form-input id="input-4" v-model="infoModal.content.kms_serviced" class="form-control" type="email" required></b-form-input>
+													<b-form-input v-show="editMode" v-model="infoModal.content.kms_serviced" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" v-model="form.kms_serviced" class="form-control" type="text"></b-form-input>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -137,12 +140,14 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-5" label="Next Service (KMS):" label-for="input-5">
-													<b-form-input id="input-5" v-model="infoModal.content.next_kms_service" class="form-control" type="email" required></b-form-input>
+													<b-form-input v-show="editMode" v-model="infoModal.content.next_kms_service" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" v-model="form.next_kms_service" class="form-control" type="text"></b-form-input>
 												</b-form-group>
 											</b-col>
 											<b-col md="6">
 												<b-form-group id="input-group-6" label="Reminder Date:" label-for="input-6">
-													<b-form-datepicker id="datepicker-sm-1" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="editMode" v-model="infoModal.content.reminder_date" id="datepicker-sm-1" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
+													<b-form-datepicker v-show="!editMode" v-model="form.reminder_date" id="datepicker-sm-1" size="sm" local="en" class="mb-2" placeholder="Select date"></b-form-datepicker>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -150,7 +155,8 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-7" label="Battery Service:" label-for="input-7">
-													<b-checkbox id="input-7">Changed</b-checkbox>
+													<b-checkbox v-show="editMode" v-model="infoModal.content.battery_service" id="input-7">Changed</b-checkbox>
+													<b-checkbox v-show="!editMode" v-model="form.battery_service" id="input-7">Changed</b-checkbox>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -213,9 +219,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -301,18 +307,79 @@
 
 			//form/modal methods
 
-			createService(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.content = item;
 				this.infoModal.title = "Create Service";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateService(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
 				this.infoModal.content = item;
 				this.infoModal.title = "Edit Service";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createService() {
+				await axios
+					.post("/v1/services", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Staff Registered Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failed",
+							type: "error",
+						});
+					});
+			},
+
+			async updateService() {
+				await axios
+					.put(
+						"/v1/services/" + this.infoModal.content.id,
+						this.infoModal.content
+					)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Staff",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "error",
+						});
+					});
 			},
 		},
 	};

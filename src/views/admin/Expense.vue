@@ -5,7 +5,7 @@
 		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Expenses</h1>
-				<b-button size="md" @click="createExpense()" class="ml-3">
+				<b-button size="md" @click="createModal()" class="ml-3">
 					<b-icon icon="cash"></b-icon>  Create Expense
 				</b-button>
             </div>
@@ -61,7 +61,7 @@
 										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
 										
-										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateExpense(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
+										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
 									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
 
@@ -94,25 +94,26 @@
 								<!-- Edit modal -->
 								<b-modal size="lg" :id="infoModal.id" :title="infoModal.title" hide-footer>
 									<!-- <pre>{{ infoModal.content }}</pre> -->
-									<b-form @submit.prevent="editMode ? updateDocument() : createOupdateDocument()" v-if="show" autocomplete="off">
+									<b-form @submit.prevent="editMode ? updateExpense() : createExpense()" v-if="show" autocomplete="off">
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-1" label="Vehicle:" label-for="input-1">
 
-													<select v-show="!editMode" class="form-control" name="registration_no">
+													<select v-show="!editMode" class="form-control" name="car_registration" v-model="form.car_registration">
 														<option v-for="vehicle in vehicles" v-bind:key="vehicle.id">{{ vehicle.registration_no }}</option>
 													</select>
 
-													<select  v-show="editMode" class="form-control" name="registration_no">
-														<option v-show="editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.id" selected>{{ vehicle.registration_no }}</option>
-														<option v-show="!editMode" v-for="vehicle in vehicles" v-bind:key="vehicle.id">{{ vehicle.registration_no }}</option>
+													<select v-show="editMode" class="form-control" name="car_registration" v-model="infoModal.content.car_registration">
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.id" selected>{{ vehicle.registration_no }}</option>
+														<option v-for="vehicle in vehicles" v-bind:key="vehicle.id">{{ vehicle.registration_no }}</option>
 													</select>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-2" label="Expense:" label-for="input-2">
-													<b-form-input id="input-2" v-model="infoModal.content.expense" class="form-control" type="text" required></b-form-input>
+													<b-form-input v-show="editMode" id="input-2" v-model="infoModal.content.expense" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode" id="input-2" v-model="infoModal.content.expense" class="form-control" type="text"></b-form-input>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -120,13 +121,15 @@
 										<b-row>
 											<b-col md="6">
 												<b-form-group id="input-group-3" label="Amount:" label-for="input-3">
-													<b-form-input id="input-3" v-model="infoModal.content.amount" class="form-control" type="text" required></b-form-input>
+													<b-form-input v-show="editMode"  v-model="infoModal.content.amount" class="form-control" type="text"></b-form-input>
+													<b-form-input v-show="!editMode"  v-model="form.amount" class="form-control" type="text"></b-form-input>
 												</b-form-group>
 											</b-col>
 
 											<b-col md="6">
 												<b-form-group id="input-group-4" label="Receipts:" label-for="input-4">
-													<b-file id="input-4" v-model="infoModal.content.receipts" type="file" class="form-control"></b-file>
+													<b-file v-show="editMode" v-model="infoModal.content.receipts" type="file" class="form-control"></b-file>
+													<b-file v-show="!editMode" v-model="infoModal.content.receipts" type="file" class="form-control"></b-file>
 												</b-form-group>
 											</b-col>
 										</b-row>
@@ -190,9 +193,9 @@
 				currentPage: 1,
 				perPage: 15,
 				pageOptions: [15, 30, 50, 100],
-				sortBy: "",
-				sortDesc: false,
-				sortDirection: "asc",
+				sortBy: "id",
+				sortDesc: true,
+				sortDirection: "desc",
 				filter: null,
 				filterOn: [],
 				infoModal: {
@@ -273,18 +276,79 @@
 
 			//form/modal methods
 
-			createExpense(item, index, button) {
+			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.content = item;
 				this.infoModal.title = "Create Expense";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
 			},
 
-			updateExpense(item, index, button) {
+			updateModal(item, index, button) {
 				this.editMode = true;
 				this.infoModal.content = item;
 				this.infoModal.title = "Edit Expense";
 				this.$root.$emit("bv::show::modal", this.infoModal.id, button);
+			},
+
+			async createExpense() {
+				await axios
+					.post("/v1/expenses", this.form)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Expense Added Successfully",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Expense",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` +
+								" " +
+								"Registration Failure",
+							type: "error",
+						});
+					});
+			},
+
+			async updateExpense() {
+				await axios
+					.put(
+						"/v1/expenses/" + this.infoModal.content.id,
+						this.infoModal.content
+					)
+					.then((res) => {
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Update Successful",
+							type: "success",
+						});
+
+						this.$bvModal.hide("info-modal");
+
+						this.$router.replace({
+							name: "Expense",
+						});
+					})
+					.catch((err) => {
+						console.error(err);
+
+						this.$toast.open({
+							message:
+								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
+							type: "error",
+						});
+					});
 			},
 		},
 	};
