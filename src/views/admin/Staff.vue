@@ -6,7 +6,7 @@
             <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-3 mb-3 border-bottom">
                 <h1 class="h2">Staff</h1>
 				<b-button size="md" @click="createModal()" class="ml-3">
-					<b-icon icon="people-fill"></b-icon>  Create Staff
+					<b-icon icon="people-fill"></b-icon> Create Staff
 				</b-button>
             </div>
 
@@ -15,7 +15,6 @@
 					<b-col md="12">
 						<b-card class="mt-3 mb-5 border-light rounded-0">
 							<b-container fluid>
-								<!-- User Interface controls -->
 								<b-row class="mt-5">
 									<b-col lg="4" class="my-1">
 										<b-form-group class="mb-3">
@@ -31,10 +30,8 @@
 									<b-col lg="4"></b-col>
 
 									<b-col lg="4" class="my-1">
-										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="dateValue" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
-										     <p>Value: <b>'{{  formattedDate }}'</b></p>
+										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="filter" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
 									</b-col>
-
 								</b-row>
 
 								<!-- Main table element -->
@@ -45,24 +42,10 @@
 										{{ row.item.name + " " + row.item.lastname }}
 									</template>
 
-									<!-- <template v-slot:cell(status)="row">
-										<div v-if="row.item.status == 1">
-											<b-badge pill variant="success">Active</b-badge>
-										</div>
-
-										<div v-else>
-											<b-badge pill variant="danger">In-Active</b-badge>
-										</div>
-									</template> -->
-
 									<template v-slot:cell(actions)="row">
-										
 										<b-icon v-b-tooltip.hover.top="'View Details'" size="sm" @click="row.toggleDetails" class="ml-3 mb-1 text-muted" icon="eye-fill"> {{ row.detailsShowing ? 'Hide ' : 'Show ' }} Details </b-icon>
-										
 										<b-icon v-b-tooltip.hover.top="'Edit Details'" size="sm" @click="updateModal(row.item, row.index, $event.target)" class="ml-3 mb-1 text-muted" icon="pencil-square"></b-icon>
-									
 										<b-icon v-b-tooltip.hover.top="'Delete'" size="sm" class="ml-3 mb-1 text-muted" icon="trash-fill"></b-icon>
-
 									</template>
 
 									<template v-slot:row-details="row">
@@ -72,7 +55,6 @@
 											</ul>
 										</b-card>
 									</template>
-
 								</b-table>
 
 								<b-row class="mt-5">
@@ -81,7 +63,6 @@
 											<b-form-select v-model="perPage" id="perPageSelect" size="sm" :options="pageOptions"></b-form-select>
 										</b-form-group>
 									</b-col>
-									
 									<b-col md="6"></b-col>
 									<b-col sm="7" md="3" class="my-1">
 										<b-pagination first-text="First" prev-text="Prev" next-text="Next" last-text="Last" v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table" align="fill" size="sm" class="my-0"></b-pagination>
@@ -126,14 +107,12 @@
 											</b-form>
 										</b-modal>
 									</div>
-									
 							</b-container>
 						</b-card>
 					</b-col>
 				</b-row>
 			</b-container>
         </main>
-
     </div>
 </template>
 
@@ -162,13 +141,20 @@
 		data() {
 			return {
 				//tables data
-				dateValue: "",
 				users: [],
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
 					{ key: "role", label: "Role", sortable: true },
-					{ key: "created_at", label: "Created At", sortable: true },
+					{
+						key: "created_at",
+						label: "Created At",
+						sortByFormatted: true,
+						formatter: (value, key, item) => {
+							return moment(value).format("L");
+						},
+						sortable: true,
+					},
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
@@ -212,10 +198,6 @@
 		},
 
 		computed: {
-			formattedDate() {
-				return moment(this.dateValue).format("DD-MM-YYYY");
-			},
-
 			rows() {
 				return this.users.length;
 			},
@@ -235,6 +217,7 @@
 				.get("/v1/users")
 				.then((res) => {
 					this.users = res.data.data;
+					//console.log(res);
 				})
 				.catch((err) => {
 					console.error(err);
@@ -249,14 +232,7 @@
 				this.currentPage = 1;
 			},
 
-			filteredList() {
-				return this.users.filter(
-					(item) => moment(item.date, "DD-MM-YYYY").month() === this.searchMonth
-				);
-			},
-
 			//form/modal methods
-
 			createModal(item, index, button) {
 				this.editMode = false;
 				this.infoModal.title = "Create Staff";
@@ -283,20 +259,18 @@
 						});
 
 						this.$bvModal.hide("info-modal");
-
 						this.$router.replace({
 							name: "Staff",
 						});
 					})
 					.catch((err) => {
 						console.error(err);
-
 						this.$toast.open({
 							message:
 								`<i class="fa fa-check-circle"></i>` +
 								" " +
 								"Registration Failed",
-							type: "erro",
+							type: "error",
 						});
 					});
 			},
@@ -312,18 +286,16 @@
 						});
 
 						this.$bvModal.hide("info-modal");
-
 						this.$router.replace({
 							name: "Staff",
 						});
 					})
 					.catch((err) => {
 						console.error(err);
-
 						this.$toast.open({
 							message:
 								`<i class="fa fa-check-circle"></i>` + " " + "Updated Failed",
-							type: "erro",
+							type: "error",
 						});
 					});
 			},
