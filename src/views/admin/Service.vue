@@ -30,7 +30,7 @@
 									</b-col>
 									<b-col lg="4"></b-col>
 									<b-col lg="4" class="my-1">
-										<b-form-datepicker id="datepicker-sm" size="sm" local="en" class="mb-2" placeholder="Filter data by date"></b-form-datepicker>
+										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="filter" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
 									</b-col>
 
 								</b-row>
@@ -200,6 +200,7 @@
 
 <script>
 	import axios from "axios";
+	import moment from "moment";
 	import Dashboard from "@/layouts/DashLayout";
 
 	export default {
@@ -211,7 +212,15 @@
 				fields: [
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "vehicle_registration", label: "Vehicle", sortable: true },
-					{ key: "service_date", label: "Service Date", sortable: true },
+					{
+						key: "service_date",
+						label: "Service Date",
+						sortByFormatted: true,
+						formatter: (value, key, item) => {
+							return moment(value).format("L");
+						},
+						sortable: true,
+					},
 					{ key: "status", label: "Status", sortable: true },
 					{ key: "actions", label: "Actions" },
 				],

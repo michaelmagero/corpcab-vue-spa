@@ -31,8 +31,7 @@
 									<b-col lg="4"></b-col>
 
 									<b-col lg="4" class="my-1">
-										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="dateValue" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
-										     <p>Value: <b>'{{  formattedDate }}'</b></p>
+										<b-form-datepicker :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }" v-model="filter" id="datepicker-sm" size="sm" local="en" class="mb-3" placeholder="Filter data by date"></b-form-datepicker>
 									</b-col>
 
 								</b-row>
@@ -168,7 +167,15 @@
 					{ key: "id", label: "ID", sortable: true },
 					{ key: "name", label: "Names", sortable: true },
 					{ key: "role", label: "Role", sortable: true },
-					{ key: "created_at", label: "Created At", sortable: true },
+					{
+						key: "created_at",
+						label: "Created At",
+						sortByFormatted: true,
+						formatter: (value, key, item) => {
+							return moment(value).format("L");
+						},
+						sortable: true,
+					},
 					{ key: "actions", label: "Actions" },
 				],
 				totalRows: 1,
